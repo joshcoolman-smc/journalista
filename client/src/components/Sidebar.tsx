@@ -54,8 +54,8 @@ export const Sidebar = ({
       }}
     >
       {/* Header */}
-      <div className="p-6" style={{ borderBottom: '1px solid var(--zen-border)' }}>
-        <div className="flex items-center justify-between mb-4">
+      <div className="px-6 py-4" style={{ borderBottom: '1px solid var(--zen-border)' }}>
+        <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium" style={{ color: 'var(--zen-text-primary)' }}>
             Files
           </h2>
@@ -72,7 +72,7 @@ export const Sidebar = ({
         
         {/* Search - only show if there are more than 10 files */}
         {files.length > 10 && (
-          <div className="relative">
+          <div className="relative mt-4">
             <Search className="absolute left-3 top-2.5 h-4 w-4" style={{ color: 'var(--zen-text-muted)' }} />
             <Input
               type="text"
