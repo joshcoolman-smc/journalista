@@ -248,7 +248,7 @@
   }
 
   .markdown-editor-header::before {
-    content: "📝 Markdown Editor";
+    content: "Markdown Editor";
     display: inline-block;
   }
 }

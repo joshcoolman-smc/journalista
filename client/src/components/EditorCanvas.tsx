@@ -158,26 +158,21 @@ export const EditorCanvas = ({
       {/* Writing Area */}
       <div className="flex-1 overflow-hidden">
         {viewMode === 'edit' && (
-          <div className="h-full p-8 overflow-y-auto relative">
-            <div className="max-w-4xl mx-auto">
-              <div className="markdown-editor-container">
-                <div className="markdown-editor-header"></div>
-                <textarea
-                  ref={textareaRef}
-                  className="w-full markdown-editor bg-transparent resize-none focus:outline-none"
-                  defaultValue={file.content}
-                  onChange={handleContentChange}
-                  style={{
-                    minHeight: 'calc(100vh - 300px)',
-                    fontFamily: 'JetBrains Mono, monospace',
-                    fontSize: '14px',
-                    lineHeight: '1.6',
-                    border: 'none',
-                    borderRadius: '0 0 8px 8px'
-                  }}
-                />
-              </div>
-            </div>
+          <div className="h-full overflow-y-auto relative">
+            <textarea
+              ref={textareaRef}
+              className="w-full h-full resize-none focus:outline-none p-8"
+              defaultValue={file.content}
+              onChange={handleContentChange}
+              style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '14px',
+                lineHeight: '1.6',
+                border: 'none',
+                backgroundColor: 'var(--zen-bg-tertiary)',
+                color: 'var(--zen-text-primary)'
+              }}
+            />
           </div>
         )}
 
@@ -201,24 +196,21 @@ export const EditorCanvas = ({
         {viewMode === 'split' && (
           <div className="h-full flex">
             {/* Left side - Editor */}
-            <div className="w-1/2 p-4 overflow-y-auto" style={{ borderRight: '1px solid var(--zen-border)' }}>
-              <div className="markdown-editor-container">
-                <div className="markdown-editor-header"></div>
-                <textarea
-                  ref={textareaRef}
-                  className="w-full markdown-editor bg-transparent resize-none focus:outline-none"
-                  defaultValue={file.content}
-                  onChange={handleContentChange}
-                  style={{
-                    minHeight: 'calc(100vh - 250px)',
-                    fontFamily: 'JetBrains Mono, monospace',
-                    fontSize: '14px',
-                    lineHeight: '1.6',
-                    border: 'none',
-                    borderRadius: '0 0 8px 8px'
-                  }}
-                />
-              </div>
+            <div className="w-1/2 overflow-y-auto" style={{ borderRight: '1px solid var(--zen-border)' }}>
+              <textarea
+                ref={textareaRef}
+                className="w-full h-full resize-none focus:outline-none p-4"
+                defaultValue={file.content}
+                onChange={handleContentChange}
+                style={{
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '14px',
+                  lineHeight: '1.6',
+                  border: 'none',
+                  backgroundColor: 'var(--zen-bg-tertiary)',
+                  color: 'var(--zen-text-primary)'
+                }}
+              />
             </div>
             
             {/* Right side - Preview */}
