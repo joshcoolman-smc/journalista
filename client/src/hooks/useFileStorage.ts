@@ -28,20 +28,31 @@ export const useFileStorage = () => {
           for (const file of syncedFiles) {
             await fileStorage.saveFile(file);
           }
+          
+          // Auto-select the first file if none is selected and we have files
+          if (syncedFiles.length > 0 && !currentFile) {
+            setCurrentFile(syncedFiles[0]);
+          }
         } catch (error) {
           console.error('Failed to sync with GitHub on startup:', error);
           setFiles(loadedFiles);
+          
+          // Auto-select the first file if none is selected and we have files
+          if (loadedFiles.length > 0 && !currentFile) {
+            setCurrentFile(loadedFiles[0]);
+          }
         }
       } else {
         setFiles(loadedFiles);
-      }
-      
-      // Auto-select the first file if none is selected
-      if (loadedFiles.length > 0 && !currentFile) {
-        setCurrentFile(loadedFiles[0]);
+        
+        // Auto-select the first file if none is selected and we have files
+        if (loadedFiles.length > 0 && !currentFile) {
+          setCurrentFile(loadedFiles[0]);
+        }
       }
     } catch (error) {
       console.error('Failed to load files:', error);
+      setFiles([]); // Ensure we set an empty array on error
     } finally {
       setLoading(false);
     }

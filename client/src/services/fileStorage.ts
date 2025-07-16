@@ -74,12 +74,16 @@ export class FileStorage implements FileStorageService {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const filesArray = JSON.parse(stored);
+        // Only load files that have actual content or were explicitly created by the user
         filesArray.forEach((file: any) => {
-          this.files.set(file.id, {
-            ...file,
-            createdAt: new Date(file.createdAt),
-            updatedAt: new Date(file.updatedAt)
-          });
+          // Skip files that are just auto-generated with no content
+          if (file.content || !file.name.includes('journal-')) {
+            this.files.set(file.id, {
+              ...file,
+              createdAt: new Date(file.createdAt),
+              updatedAt: new Date(file.updatedAt)
+            });
+          }
         });
       }
     } catch (error) {
