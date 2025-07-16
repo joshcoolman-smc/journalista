@@ -38,8 +38,30 @@ export class GitHubSync implements GitHubSyncService {
         }
       });
 
-      if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+      if (response.status === 404) {
+        // Repository doesn't exist, try to create it
+        const createResponse = await fetch(`https://api.github.com/user/repos`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `token ${config.token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: config.repo,
+            description: 'Personal journal entries managed by Zen Journal',
+            private: true,
+            auto_init: true
+          })
+        });
+
+        if (!createResponse.ok) {
+          const errorData = await createResponse.json();
+          throw new Error(`Failed to create repository: ${errorData.message || createResponse.statusText}`);
+        }
+      } else if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`GitHub API error: ${errorData.message || response.statusText}`);
       }
 
       this.config = config;

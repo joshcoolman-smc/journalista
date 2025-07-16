@@ -57,7 +57,7 @@ export const ConflictResolution = ({ conflicts, onResolve, onCancel }: ConflictR
 
   return (
     <Dialog open={true} onOpenChange={onCancel}>
-      <DialogContent className="max-w-4xl max-h-[80vh]" style={{ backgroundColor: 'var(--zen-bg-primary)' }}>
+      <DialogContent className="max-w-4xl max-h-[80vh]" style={{ backgroundColor: 'var(--zen-bg-primary)' }} aria-describedby="conflict-resolution-description">
         <DialogHeader>
           <DialogTitle style={{ color: 'var(--zen-text-primary)' }}>
             Resolve Conflicts ({currentConflictIndex + 1} of {conflicts.length})
@@ -65,6 +65,10 @@ export const ConflictResolution = ({ conflicts, onResolve, onCancel }: ConflictR
         </DialogHeader>
 
         <div className="space-y-4">
+          <div id="conflict-resolution-description" className="text-sm" style={{ color: 'var(--zen-text-secondary)' }}>
+            Choose how to resolve conflicts between your local files and the versions on GitHub.
+          </div>
+          
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium" style={{ color: 'var(--zen-text-primary)' }}>
               {currentConflict.name}

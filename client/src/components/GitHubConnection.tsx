@@ -83,7 +83,7 @@ export const GitHubConnection = ({ onConnectionChange }: GitHubConnectionProps) 
           Connect GitHub
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md" style={{ backgroundColor: 'var(--zen-bg-primary)' }}>
+      <DialogContent className="sm:max-w-md" style={{ backgroundColor: 'var(--zen-bg-primary)' }} aria-describedby="github-connection-description">
         <DialogHeader>
           <DialogTitle style={{ color: 'var(--zen-text-primary)' }}>
             Connect to GitHub
@@ -91,8 +91,8 @@ export const GitHubConnection = ({ onConnectionChange }: GitHubConnectionProps) 
         </DialogHeader>
         
         <div className="space-y-4">
-          <div className="text-sm" style={{ color: 'var(--zen-text-secondary)' }}>
-            Your journal entries will be backed up to a GitHub repository as markdown files.
+          <div id="github-connection-description" className="text-sm" style={{ color: 'var(--zen-text-secondary)' }}>
+            Your journal entries will be backed up to a GitHub repository as markdown files. If the repository doesn't exist, it will be created automatically.
           </div>
 
           {error && (
@@ -169,6 +169,9 @@ export const GitHubConnection = ({ onConnectionChange }: GitHubConnectionProps) 
                   Create one here
                   <ExternalLink className="w-3 h-3" />
                 </a>
+              </div>
+              <div className="text-xs mt-1" style={{ color: 'var(--zen-text-muted)' }}>
+                Token needs 'repo' scope. If the repository doesn't exist, it will be created automatically.
               </div>
             </div>
           </div>
