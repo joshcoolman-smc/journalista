@@ -167,21 +167,6 @@ export const Sidebar = ({
           </div>
         )}
       </div>
-
-      {/* Create Button */}
-      <div className="p-4" style={{ borderTop: '1px solid var(--zen-border)' }}>
-        <Button
-          onClick={onFileCreate}
-          className="w-full transition-zen"
-          style={{
-            backgroundColor: 'var(--zen-accent)',
-            color: 'white'
-          }}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          New Journal Entry
-        </Button>
-      </div>
     </aside>
   );
 };
