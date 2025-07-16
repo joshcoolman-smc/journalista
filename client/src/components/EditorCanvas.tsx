@@ -94,9 +94,6 @@ export const EditorCanvas = ({
         }}
       >
         <div className="flex items-center justify-between">
-          <div className="text-sm" style={{ color: 'var(--zen-text-muted)' }}>
-            {getWordCount(file.content)} words
-          </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="ghost"
@@ -148,7 +145,7 @@ export const EditorCanvas = ({
         {viewMode === 'edit' && (
           <div className="h-full flex flex-col">
             <div 
-              className="px-4 py-2 text-xs font-medium border-b"
+              className="px-4 py-2 text-xs font-medium border-b flex items-center justify-between"
               style={{
                 backgroundColor: 'var(--zen-bg-secondary)',
                 borderColor: 'var(--zen-border)',
@@ -156,7 +153,8 @@ export const EditorCanvas = ({
                 fontFamily: 'JetBrains Mono, monospace'
               }}
             >
-              Markdown Editor
+              <span>Markdown Editor</span>
+              <span>{getWordCount(file.content)} words</span>
             </div>
             <textarea
               ref={textareaRef}
@@ -210,7 +208,7 @@ export const EditorCanvas = ({
             {/* Left side - Editor */}
             <div className="w-1/2 flex flex-col" style={{ borderRight: '1px solid var(--zen-border)' }}>
               <div 
-                className="px-4 py-2 text-xs font-medium border-b"
+                className="px-4 py-2 text-xs font-medium border-b flex items-center justify-between"
                 style={{
                   backgroundColor: 'var(--zen-bg-secondary)',
                   borderColor: 'var(--zen-border)',
@@ -218,7 +216,8 @@ export const EditorCanvas = ({
                   fontFamily: 'JetBrains Mono, monospace'
                 }}
               >
-                Markdown Editor
+                <span>Markdown Editor</span>
+                <span>{getWordCount(file.content)} words</span>
               </div>
               <textarea
                 ref={textareaRef}
