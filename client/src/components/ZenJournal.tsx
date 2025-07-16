@@ -2,6 +2,9 @@ import { useState, useCallback } from 'react';
 import { Sidebar } from './Sidebar';
 import { EditorCanvas } from './EditorCanvas';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
+import { GitHubConnection } from './GitHubConnection';
+import { SyncIndicator } from './SyncIndicator';
+import { ConflictResolution } from './ConflictResolution';
 import { useFileStorage } from '../hooks/useFileStorage';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { JournalFile } from '../types/journal';
@@ -15,10 +18,12 @@ export const ZenJournal = () => {
     createFile,
     saveFile,
     deleteFile,
-    selectFile
+    selectFile,
+    githubSync
   } = useFileStorage();
 
   const { status, lastSaved, triggerAutoSave } = useAutoSave(currentFile, saveFile);
+  const [showConflictResolution, setShowConflictResolution] = useState(false);
 
   const handleContentChange = useCallback((content: string) => {
     if (currentFile) {
@@ -94,7 +99,20 @@ export const ZenJournal = () => {
           </h1>
         </div>
         
-        <AutoSaveIndicator status={status} lastSaved={lastSaved} />
+        <div className="flex items-center space-x-4">
+          <AutoSaveIndicator status={status} lastSaved={lastSaved} />
+          
+          {githubSync.isConnected && (
+            <SyncIndicator
+              status={githubSync.syncStatus}
+              lastSynced={githubSync.lastSynced}
+              onManualSync={() => githubSync.manualSync(files)}
+              onResolveConflicts={() => setShowConflictResolution(true)}
+            />
+          )}
+          
+          <GitHubConnection onConnectionChange={githubSync.handleConnectionChange} />
+        </div>
       </header>
 
       {/* Main Layout */}
@@ -117,6 +135,18 @@ export const ZenJournal = () => {
           sidebarVisible={sidebarVisible}
         />
       </div>
+
+      {/* Conflict Resolution Dialog */}
+      {showConflictResolution && githubSync.conflicts.length > 0 && (
+        <ConflictResolution
+          conflicts={githubSync.conflicts}
+          onResolve={(resolvedFiles) => {
+            githubSync.resolveConflicts(resolvedFiles);
+            setShowConflictResolution(false);
+          }}
+          onCancel={() => setShowConflictResolution(false)}
+        />
+      )}
     </div>
   );
 };
