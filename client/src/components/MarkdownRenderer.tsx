@@ -49,6 +49,21 @@ export const MarkdownRenderer = ({ content, className = '' }: MarkdownRendererPr
       }
       
       // Handle headers
+      if (line.startsWith('###### ')) {
+        flushList();
+        processed.push(`<h6>${line.substring(7)}</h6>`);
+        continue;
+      }
+      if (line.startsWith('##### ')) {
+        flushList();
+        processed.push(`<h5>${line.substring(6)}</h5>`);
+        continue;
+      }
+      if (line.startsWith('#### ')) {
+        flushList();
+        processed.push(`<h4>${line.substring(5)}</h4>`);
+        continue;
+      }
       if (line.startsWith('### ')) {
         flushList();
         processed.push(`<h3>${line.substring(4)}</h3>`);

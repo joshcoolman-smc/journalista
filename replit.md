@@ -8,6 +8,20 @@ Zen Journal is a minimalist markdown journaling application built with React, Ex
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### January 16, 2025
+- **Default View Mode**: Changed default to preview mode instead of raw markdown editing
+- **Contextual Formatting Toolbar**: Added popup toolbar that appears when text is selected, supporting:
+  - Bold and italic formatting
+  - Unordered and ordered lists
+  - Heading levels 1-6 via dropdown menu
+- **Dual Editor Modes**: 
+  - Preview mode: Beautiful rendered markdown with inline editing capability
+  - Markdown mode: Code editor experience with monospace font and syntax highlighting
+- **Enhanced Markdown Support**: Extended renderer to support heading levels 4-6
+- **Improved User Experience**: Click-to-edit functionality in preview mode with smooth transitions
+
 ## System Architecture
 
 ### Frontend Architecture

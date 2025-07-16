@@ -196,6 +196,61 @@
   .markdown-content br {
     @apply mb-2;
   }
+
+  .markdown-content h4 {
+    @apply text-xl font-medium mb-3 mt-5;
+    color: var(--zen-text-primary);
+  }
+
+  .markdown-content h5 {
+    @apply text-lg font-medium mb-2 mt-4;
+    color: var(--zen-text-primary);
+  }
+
+  .markdown-content h6 {
+    @apply text-base font-medium mb-2 mt-3;
+    color: var(--zen-text-primary);
+  }
+
+  /* Markdown editor styles */
+  .markdown-editor {
+    @apply zen-mono;
+    font-size: 14px;
+    line-height: 1.6;
+    background-color: var(--zen-bg-primary);
+    color: var(--zen-text-primary);
+    border: 1px solid var(--zen-border);
+    border-radius: 8px;
+    padding: 24px;
+  }
+
+  .markdown-editor::placeholder {
+    color: var(--zen-text-muted);
+    font-style: italic;
+  }
+
+  /* Syntax highlighting for markdown editor */
+  .markdown-editor-container {
+    position: relative;
+    background-color: var(--zen-bg-secondary);
+    border: 1px solid var(--zen-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .markdown-editor-header {
+    background-color: var(--zen-bg-tertiary);
+    border-bottom: 1px solid var(--zen-border);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--zen-text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .markdown-editor-header::before {
+    content: "📝 Markdown Editor";
+    display: inline-block;
+  }
 }
 
 /* Animations */

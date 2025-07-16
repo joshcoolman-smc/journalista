@@ -2,8 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import { JournalFile } from '../types/journal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Eye, Download, Menu } from 'lucide-react';
+import { Eye, Download, Menu, Code } from 'lucide-react';
 import { MarkdownRenderer } from './MarkdownRenderer';
+import { FormattingToolbar } from './FormattingToolbar';
+import { useTextSelection } from '../hooks/useTextSelection';
 
 interface EditorCanvasProps {
   file: JournalFile | null;
@@ -20,8 +22,9 @@ export const EditorCanvas = ({
   onFileNameChange,
   sidebarVisible 
 }: EditorCanvasProps) => {
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { selection, cursorPosition, formatText } = useTextSelection(textareaRef);
 
   useEffect(() => {
     if (textareaRef.current && file) {
@@ -126,9 +129,10 @@ export const EditorCanvas = ({
               size="sm"
               onClick={() => setIsPreviewMode(!isPreviewMode)}
               className="transition-zen"
-              style={{ color: 'var(--zen-text-muted)' }}
+              style={{ color: isPreviewMode ? 'var(--zen-text-muted)' : 'var(--zen-accent)' }}
+              title={isPreviewMode ? 'Edit Markdown' : 'Preview'}
             >
-              <Eye className="h-4 w-4" />
+              {isPreviewMode ? <Code className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </Button>
             <Button
               variant="ghost"
@@ -136,6 +140,7 @@ export const EditorCanvas = ({
               onClick={exportFile}
               className="transition-zen"
               style={{ color: 'var(--zen-text-muted)' }}
+              title="Export as Markdown"
             >
               <Download className="h-4 w-4" />
             </Button>
@@ -146,28 +151,101 @@ export const EditorCanvas = ({
       {/* Writing Area */}
       <div className="flex-1 overflow-hidden">
         {isPreviewMode ? (
-          <div className="h-full p-8 overflow-y-auto">
+          <div className="h-full p-8 overflow-y-auto relative">
             <div className="max-w-4xl mx-auto">
-              <MarkdownRenderer content={file.content} />
-            </div>
-          </div>
-        ) : (
-          <div className="h-full p-8 overflow-y-auto">
-            <div className="max-w-4xl mx-auto">
+              {/* Textarea for editing in preview mode */}
               <textarea
                 ref={textareaRef}
-                className="w-full h-full bg-transparent resize-none focus:outline-none zen-content"
-                placeholder="Start writing your thoughts..."
+                className="absolute inset-0 w-full h-full bg-transparent resize-none focus:outline-none zen-content transition-all duration-200"
                 defaultValue={file.content}
                 onChange={handleContentChange}
+                onBlur={() => {
+                  if (textareaRef.current) {
+                    textareaRef.current.style.pointerEvents = 'none';
+                    textareaRef.current.style.opacity = '0';
+                    textareaRef.current.style.color = 'transparent';
+                  }
+                }}
                 style={{
-                  color: 'var(--zen-text-primary)',
+                  color: 'transparent',
                   minHeight: 'calc(100vh - 200px)',
                   fontFamily: 'Crimson Text, serif',
                   fontSize: '18px',
                   lineHeight: '1.7',
-                  letterSpacing: '0.01em'
+                  letterSpacing: '0.01em',
+                  zIndex: 10,
+                  opacity: 0,
+                  pointerEvents: 'none'
                 }}
+              />
+              
+              {/* Rendered markdown - clickable to focus textarea */}
+              <div 
+                className="relative cursor-text"
+                onClick={() => {
+                  if (textareaRef.current) {
+                    textareaRef.current.style.pointerEvents = 'auto';
+                    textareaRef.current.style.opacity = '0.1';
+                    textareaRef.current.style.color = 'var(--zen-text-primary)';
+                    textareaRef.current.focus();
+                  }
+                }}
+                style={{ zIndex: 2 }}
+              >
+                <MarkdownRenderer content={file.content} />
+                
+                {/* Subtle hint when content is empty */}
+                {!file.content.trim() && (
+                  <div 
+                    className="absolute top-0 left-0 pointer-events-none"
+                    style={{ 
+                      color: 'var(--zen-text-muted)',
+                      fontFamily: 'Crimson Text, serif',
+                      fontSize: '18px',
+                      lineHeight: '1.7',
+                      letterSpacing: '0.01em'
+                    }}
+                  >
+                    Click here to start writing...
+                  </div>
+                )}
+              </div>
+              
+              {/* Formatting Toolbar */}
+              <FormattingToolbar
+                onFormat={formatText}
+                position={cursorPosition}
+                visible={!!selection && isPreviewMode}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="h-full p-8 overflow-y-auto relative">
+            <div className="max-w-4xl mx-auto">
+              <div className="markdown-editor-container">
+                <div className="markdown-editor-header"></div>
+                <textarea
+                  ref={textareaRef}
+                  className="w-full markdown-editor bg-transparent resize-none focus:outline-none"
+                  placeholder="# Start writing your thoughts...\n\nUse **bold** and *italic* text\n- Create bullet lists\n1. Or numbered lists\n\n> Add blockquotes for emphasis"
+                  defaultValue={file.content}
+                  onChange={handleContentChange}
+                  style={{
+                    minHeight: 'calc(100vh - 300px)',
+                    fontFamily: 'JetBrains Mono, monospace',
+                    fontSize: '14px',
+                    lineHeight: '1.6',
+                    border: 'none',
+                    borderRadius: '0 0 8px 8px'
+                  }}
+                />
+              </div>
+              
+              {/* Formatting Toolbar */}
+              <FormattingToolbar
+                onFormat={formatText}
+                position={cursorPosition}
+                visible={!!selection && !isPreviewMode}
               />
             </div>
           </div>
