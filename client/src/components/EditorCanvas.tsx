@@ -20,7 +20,7 @@ export const EditorCanvas = ({
   onFileNameChange,
   sidebarVisible 
 }: EditorCanvasProps) => {
-  const [viewMode, setViewMode] = useState<'edit' | 'preview' | 'split'>('edit');
+  const [viewMode, setViewMode] = useState<'edit' | 'preview' | 'split'>('split');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -98,6 +98,16 @@ export const EditorCanvas = ({
             <Button
               variant="ghost"
               size="sm"
+              onClick={() => setViewMode('split')}
+              className="transition-zen"
+              style={{ color: viewMode === 'split' ? 'var(--zen-accent)' : 'var(--zen-text-muted)' }}
+              title="Split View"
+            >
+              <Columns className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setViewMode('edit')}
               className="transition-zen"
               style={{ color: viewMode === 'edit' ? 'var(--zen-accent)' : 'var(--zen-text-muted)' }}
@@ -114,16 +124,6 @@ export const EditorCanvas = ({
               title="Preview"
             >
               <Eye className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setViewMode('split')}
-              className="transition-zen"
-              style={{ color: viewMode === 'split' ? 'var(--zen-accent)' : 'var(--zen-text-muted)' }}
-              title="Split View"
-            >
-              <Columns className="h-4 w-4" />
             </Button>
             <div className="w-px h-6 bg-gray-600 mx-2"></div>
             <Button
