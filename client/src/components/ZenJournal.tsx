@@ -5,7 +5,6 @@ import { AutoSaveIndicator } from './AutoSaveIndicator';
 import { GitHubConnection } from './GitHubConnection';
 import { SyncIndicator } from './SyncIndicator';
 import { ConflictResolution } from './ConflictResolution';
-import { PrivacyNotice } from './PrivacyNotice';
 import { DataManagement } from './DataManagement';
 import { useFileStorage } from '../hooks/useFileStorage';
 import { useAutoSave } from '../hooks/useAutoSave';
@@ -185,10 +184,6 @@ export const ZenJournal = () => {
         </div>
       </header>
 
-      {/* Privacy Notice */}
-      <div className="px-6 py-2">
-        <PrivacyNotice />
-      </div>
 
       {/* Main Layout */}
       <div className="flex flex-1 overflow-hidden">

@@ -9,7 +9,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` - Build production bundle (client build + server bundle)
 - `npm run start` - Start production server
 - `npm run check` - Run TypeScript type checking
-- `npm run db:push` - Push database schema changes (Drizzle)
 
 ### Important Notes
 - The app runs on a single port (5000) for both frontend and backend
@@ -24,7 +23,6 @@ This is a **privacy-first journaling application** with local-first storage and 
 
 - **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS
 - **Backend**: Express.js + TypeScript (minimal API server)
-- **Database**: PostgreSQL with Drizzle ORM (currently minimal usage)
 - **Storage**: Browser localStorage (primary) + GitHub API (optional backup)
 - **Routing**: Wouter (lightweight React router)
 - **UI**: Radix UI components with custom styling
@@ -45,9 +43,14 @@ This is a **privacy-first journaling application** with local-first storage and 
 
 ### Frontend (`client/src/`)
 - `components/ZenJournal.tsx` - Main application component
-- `components/EditorCanvas.tsx` - Markdown editor with live preview
+- `components/EditorCanvas.tsx` - Markdown editor with 3 view modes (edit/split/preview)
 - `components/Sidebar.tsx` - File management sidebar
 - `components/GitHubConnection.tsx` - GitHub integration UI
+- `components/AutoSaveIndicator.tsx` - Shows auto-save status
+- `components/SyncIndicator.tsx` - Shows GitHub sync status
+- `components/ConflictResolution.tsx` - GitHub conflict resolution dialog
+- `components/DataManagement.tsx` - Export/clear data functions
+- `components/MarkdownRenderer.tsx` - Renders markdown content
 - `hooks/useFileStorage.ts` - Local file storage management
 - `hooks/useGitHubSync.ts` - GitHub synchronization logic
 - `hooks/useAutoSave.ts` - Auto-save functionality
@@ -59,9 +62,6 @@ This is a **privacy-first journaling application** with local-first storage and 
 - `index.ts` - Express server setup with Vite integration
 - `routes.ts` - API route definitions (minimal)
 - `vite.ts` - Vite development server integration
-
-### Shared (`shared/`)
-- `schema.ts` - Database schema definitions (Drizzle)
 
 ## Key Features to Understand
 
@@ -98,32 +98,106 @@ This is a **privacy-first journaling application** with local-first storage and 
 - Server bundle goes to `dist/` directory
 - Static files served by Express in production
 
-### Database Usage
-- Database schema exists but is minimally used
-- Currently focused on client-side storage
-- Use `npm run db:push` if schema changes are needed
 
-## Important Implementation Details
+## Implementation Notes
 
 ### GitHub API Integration
-- All GitHub operations happen client-side for privacy
-- Base64 encoding for file content uploads
-- Proper error handling for API rate limits
-- Repository auto-creation with proper permissions
+- Client-side operations for privacy (no server-side GitHub access)
+- Repository auto-creation if doesn't exist
+- Conflict detection and manual resolution UI
+- Files stored in `entries/` directory as `.md` files
 
-### Conflict Resolution
-- Detects conflicts when pulling from GitHub
-- Provides UI for manual conflict resolution
-- Maintains file history through Git
-
-### Security Considerations
-- No authentication system - truly anonymous usage
+### Security & Privacy
+- Truly anonymous usage (no authentication/tracking)
 - GitHub tokens stored in localStorage only
-- All API calls use HTTPS
-- No server-side user data storage
+- All data stays client-side unless explicitly synced to GitHub
 
 ### UI/UX Patterns
 - Minimal, distraction-free interface
-- Split view for markdown editing and preview
+- Three editor view modes: **edit** (markdown-only, default), **split** (side-by-side), **preview** (rendered-only)
+- Clean header with view mode switchers (Code → Columns → Eye icons)
 - Responsive design for mobile/desktop
-- Custom CSS variables for theming
+- Custom CSS variables for theming (--zen-* pattern)
+- Privacy-first design (no banners or tracking elements)
+
+## Current View Mode Behavior
+- **Default**: Markdown editor view for focused writing
+- **Edit Mode**: Full-width markdown editor with word count
+- **Split Mode**: Side-by-side markdown editor and live preview
+- **Preview Mode**: Full-width rendered markdown view
+
+## Planned Improvements
+
+### GitHub Integration Refactor
+See `github-integration-refactor.md` for comprehensive planned improvements:
+- Simplified connection flow (token-only → repository picker)
+- Repository browsing and switching capabilities
+- Settings panel to replace header button clutter
+- Local entry migration workflow for seamless GitHub adoption
+
+## Recent Changes
+- **2025-01**: Removed privacy notice banner for cleaner interface
+- **2025-01**: Changed default view from split to markdown editor
+- **2025-01**: Reordered view buttons to edit → split → preview
+
+## Development Tips
+
+### Key Patterns
+- **CSS Variables**: Use `var(--zen-*)` for consistent theming
+- **State Management**: React useState for local state, localStorage for persistence
+- **File Naming**: Temporary files use `temp-` prefix, confirmed files get `.md` extension
+- **Component Props**: TypeScript interfaces for all component props
+
+### Common Tasks
+- **View Mode Changes**: Edit `EditorCanvas.tsx` view mode logic
+- **GitHub Integration**: Main logic in `services/githubSync.ts` 
+- **File Operations**: Use `useFileStorage` hook for CRUD operations
+- **Styling**: Components use inline styles with CSS variables for theme consistency
+
+## AI-Assisted Development Workflow
+
+This project uses a simple, git-based system for collaborative development between human and AI. The workflow is documented here for consistency and can be adopted by other projects.
+
+### Core Workflow
+
+1. **Check AI Progress First**: Always check `ai-progress/open/` for current feature documents before starting any work
+2. **Feature Planning**: When user requests new features, create comprehensive specification documents in `ai-progress/open/`
+3. **Implementation**: Use documents in `ai-progress/open/` as detailed specifications for implementation
+4. **Completion**: Move finished features from `ai-progress/open/` to `ai-progress/closed/`
+5. **Status Tracking**: Update document status throughout the process (Planning → Ready for Implementation → In Progress → Completed)
+
+### AI Assistant Guidelines
+
+**When user asks for new features:**
+- Create or collaborate on detailed specification documents
+- Place in `ai-progress/open/` with appropriate status
+- Include technical implementation details, user stories, and acceptance criteria
+
+**When user asks "what's outstanding?":**
+- List contents of `ai-progress/open/` with current status
+- Provide brief summary of each open item
+
+**When user asks "what's been done?":**
+- List contents of `ai-progress/closed/`
+- Reference recent commits and completed features
+
+**Before implementing anything:**
+- Check `ai-progress/open/` for relevant specifications
+- Use existing documents as implementation guides
+- Update status as work progresses
+
+**Proactive suggestions:**
+- Based on `ai-progress/open/` contents, suggest logical next steps
+- Identify dependencies between open features
+- Recommend prioritization based on technical complexity
+
+### Benefits of This System
+
+- **Version Controlled**: All project planning tracked in git with code
+- **Self-Documenting**: Clear history of features and decisions
+- **Tool-Free**: No external project management tools required
+- **Collaborative**: Easy handoffs between planning and implementation
+- **Transparent**: Open source projects can see development process
+- **Flexible**: Works for any project size or complexity
+
+This approach provides structured project management while maintaining the simplicity and transparency that makes open source development effective.
