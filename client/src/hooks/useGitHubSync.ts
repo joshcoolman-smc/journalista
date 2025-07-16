@@ -131,6 +131,21 @@ export const useGitHubSync = () => {
     }
   }, [isConnected]);
 
+  const deleteFile = useCallback(async (file: JournalFile): Promise<void> => {
+    if (!isConnected) return;
+
+    try {
+      setSyncStatus('syncing');
+      await githubSync.deleteFile(file);
+      setSyncStatus('synced');
+      setLastSynced(new Date());
+    } catch (error) {
+      console.error('Failed to delete file from GitHub:', error);
+      setSyncStatus('error');
+      throw error;
+    }
+  }, [isConnected]);
+
   const resolveConflicts = useCallback(async (resolvedFiles: JournalFile[]): Promise<JournalFile[]> => {
     if (!isConnected) return resolvedFiles;
 
@@ -158,6 +173,7 @@ export const useGitHubSync = () => {
     syncAllFiles,
     pullChanges,
     manualSync,
+    deleteFile,
     resolveConflicts
   };
 };

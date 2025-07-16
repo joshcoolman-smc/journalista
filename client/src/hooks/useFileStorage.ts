@@ -124,18 +124,18 @@ export const useFileStorage = () => {
     try {
       const fileToDelete = files.find(f => f.id === fileId);
       
-      // If GitHub is connected, try to delete from GitHub too
+      // If GitHub is connected and file has GitHub SHA, delete from GitHub first
       if (githubSync.isConnected && fileToDelete?.githubSha) {
         try {
-          // Note: GitHub API doesn't have a direct delete, but we can delete the file by updating with empty content
-          // For now, we'll just remove from localStorage and let GitHub keep the history
-          console.log('File will be removed from local storage but kept in GitHub history');
+          await githubSync.deleteFile(fileToDelete);
+          console.log('File successfully deleted from GitHub repository');
         } catch (error) {
           console.error('Failed to delete file from GitHub:', error);
           // Continue with local deletion even if GitHub fails
         }
       }
       
+      // Always delete from localStorage
       await fileStorage.deleteFile(fileId);
       setFiles(prev => prev.filter(f => f.id !== fileId));
       

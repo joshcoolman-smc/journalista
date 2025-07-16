@@ -189,6 +189,45 @@ export class GitHubSync implements GitHubSyncService {
     }
   }
 
+  async deleteFile(file: JournalFile): Promise<void> {
+    if (!this.config) {
+      throw new Error('GitHub not connected');
+    }
+
+    if (!file.githubSha) {
+      throw new Error('File does not have GitHub SHA - cannot delete');
+    }
+
+    const path = `entries/${file.name}`;
+    
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/contents/${path}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `token ${this.config.token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Delete ${file.name}`,
+            sha: file.githubSha
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`GitHub API error: ${errorData.message || response.statusText}`);
+      }
+
+      this.updateLastSyncTime();
+    } catch (error) {
+      throw new Error(`Failed to delete file from GitHub: ${error}`);
+    }
+  }
+
   getLastSyncTime(): Date | null {
     return this.lastSyncTime;
   }

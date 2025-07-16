@@ -31,6 +31,7 @@ export interface GitHubSyncService {
   syncFile(file: JournalFile): Promise<JournalFile>;
   syncAllFiles(files: JournalFile[]): Promise<JournalFile[]>;
   pullChanges(): Promise<JournalFile[]>;
+  deleteFile(file: JournalFile): Promise<void>;
   getLastSyncTime(): Date | null;
 }
 
