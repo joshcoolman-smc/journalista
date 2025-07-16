@@ -36,6 +36,11 @@ export class FileStorage implements FileStorageService {
     await this.saveToStorage();
   }
 
+  async clearAll(): Promise<void> {
+    this.files.clear();
+    await this.saveToStorage();
+  }
+
   async createFile(name: string): Promise<JournalFile> {
     const file: JournalFile = {
       id: this.generateId(),

@@ -14,6 +14,7 @@ export interface FileStorageService {
   saveFile(file: JournalFile): Promise<void>;
   deleteFile(fileId: string): Promise<void>;
   createFile(name: string): Promise<JournalFile>;
+  clearAll(): Promise<void>;
   supportsFileSystem(): boolean;
 }
 

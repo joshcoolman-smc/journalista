@@ -14,9 +14,15 @@ Preferred communication style: Simple, everyday language.
 - **GitHub Integration**: Added comprehensive GitHub backup and sync functionality
   - OAuth-style personal access token authentication
   - Automatic repository creation if it doesn't exist
-  - Dual storage system (localStorage + GitHub)
+  - **GitHub as Source of Truth**: When connected, GitHub repository is authoritative
+  - localStorage used as local cache for performance
   - Background auto-sync with conflict resolution
   - Manual sync button and sync status indicators
+- **Architecture Change**: 
+  - **Storage Priority**: GitHub first, localStorage as cache when connected
+  - **Data Flow**: Pull from GitHub on startup, push changes to GitHub immediately
+  - **Fallback Strategy**: localStorage fallback when GitHub unavailable
+  - Fixed automatic journal creation bug on app restart
 - **Security Enhancements**: 
   - GitHub token validation with proper error handling
   - Privacy notice explaining local-first data model
