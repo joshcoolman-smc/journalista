@@ -31,6 +31,18 @@ export class GitHubSync implements GitHubSyncService {
   async connect(config: GitHubConfig): Promise<void> {
     // Validate the token and repo access
     try {
+      // First validate the token has repo scope
+      const userResponse = await fetch('https://api.github.com/user', {
+        headers: {
+          'Authorization': `token ${config.token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (!userResponse.ok) {
+        throw new Error('Invalid GitHub token. Please check your token and try again.');
+      }
+
       const response = await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}`, {
         headers: {
           'Authorization': `token ${config.token}`,

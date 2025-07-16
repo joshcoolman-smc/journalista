@@ -5,6 +5,8 @@ import { AutoSaveIndicator } from './AutoSaveIndicator';
 import { GitHubConnection } from './GitHubConnection';
 import { SyncIndicator } from './SyncIndicator';
 import { ConflictResolution } from './ConflictResolution';
+import { PrivacyNotice } from './PrivacyNotice';
+import { DataManagement } from './DataManagement';
 import { useFileStorage } from '../hooks/useFileStorage';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { JournalFile } from '../types/journal';
@@ -62,6 +64,40 @@ export const ZenJournal = () => {
     setSidebarVisible(prev => !prev);
   }, []);
 
+  const handleClearAllData = useCallback(() => {
+    // Clear localStorage
+    localStorage.clear();
+    
+    // Disconnect from GitHub
+    githubSync.handleConnectionChange(false);
+    
+    // Reload the page to reset all state
+    window.location.reload();
+  }, [githubSync]);
+
+  const handleExportData = useCallback(() => {
+    const exportData = {
+      files: files.map(file => ({
+        name: file.name,
+        content: file.content,
+        createdAt: file.createdAt.toISOString(),
+        updatedAt: file.updatedAt.toISOString()
+      })),
+      exportedAt: new Date().toISOString(),
+      version: '1.0'
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `zen-journal-export-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [files]);
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -112,8 +148,18 @@ export const ZenJournal = () => {
           )}
           
           <GitHubConnection onConnectionChange={githubSync.handleConnectionChange} />
+          
+          <DataManagement 
+            onClearAllData={handleClearAllData}
+            onExportData={handleExportData}
+          />
         </div>
       </header>
+
+      {/* Privacy Notice */}
+      <div className="px-6 py-2">
+        <PrivacyNotice />
+      </div>
 
       {/* Main Layout */}
       <div className="flex flex-1 overflow-hidden">

@@ -11,15 +11,26 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 16, 2025
-- **Default View Mode**: Changed default to split view mode for optimal writing experience
-- **Three View Modes**: 
-  - Split view: Live editor on left, preview on right with real-time updates (default)
-  - Edit mode: Code editor with monospace font and syntax highlighting
-  - Preview mode: Read-only beautiful rendered markdown
-- **Reordered Interface**: View mode buttons now ordered as Split, Markdown, Preview
-- **Removed Complexity**: Eliminated contextual formatting toolbar and inline editing for simpler, focused experience
-- **Enhanced Markdown Support**: Extended renderer to support heading levels 1-6
-- **Improved Editor Experience**: JetBrains Mono font with proper code editor styling and minimal headers
+- **GitHub Integration**: Added comprehensive GitHub backup and sync functionality
+  - OAuth-style personal access token authentication
+  - Automatic repository creation if it doesn't exist
+  - Dual storage system (localStorage + GitHub)
+  - Background auto-sync with conflict resolution
+  - Manual sync button and sync status indicators
+- **Security Enhancements**: 
+  - GitHub token validation with proper error handling
+  - Privacy notice explaining local-first data model
+  - Data export functionality (JSON format)
+  - Clear all data option with confirmation dialog
+- **Deployment Preparation**:
+  - MIT license added
+  - Comprehensive README with security model documentation
+  - Enhanced error handling for public deployment
+  - Accessibility improvements for dialog components
+- **Previous Changes**: 
+  - Default split view mode for optimal writing experience
+  - Three view modes (Split, Markdown, Preview)
+  - Enhanced markdown support and JetBrains Mono font integration
 
 ## System Architecture
 
