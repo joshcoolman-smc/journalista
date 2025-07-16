@@ -70,22 +70,24 @@ export const Sidebar = ({
           </Button>
         </div>
         
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-2.5 h-4 w-4" style={{ color: 'var(--zen-text-muted)' }} />
-          <Input
-            type="text"
-            placeholder="Search files..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 transition-zen focus-ring"
-            style={{
-              backgroundColor: 'var(--zen-bg-tertiary)',
-              color: 'var(--zen-text-primary)',
-              border: '1px solid var(--zen-border)'
-            }}
-          />
-        </div>
+        {/* Search - only show if there are more than 10 files */}
+        {files.length > 10 && (
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 h-4 w-4" style={{ color: 'var(--zen-text-muted)' }} />
+            <Input
+              type="text"
+              placeholder="Search files..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 transition-zen focus-ring"
+              style={{
+                backgroundColor: 'var(--zen-bg-tertiary)',
+                color: 'var(--zen-text-primary)',
+                border: '1px solid var(--zen-border)'
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* File List */}
