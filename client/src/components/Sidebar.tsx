@@ -54,7 +54,7 @@ export const Sidebar = ({
       }}
     >
       {/* Header */}
-      <div className="px-6 py-4" style={{ borderBottom: '1px solid var(--zen-border)' }}>
+      <div className="px-6" style={{ borderBottom: '1px solid var(--zen-border)', paddingTop: '18px', paddingBottom: '18px' }}>
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium" style={{ color: 'var(--zen-text-primary)' }}>
             Files
