@@ -165,7 +165,6 @@ export const EditorCanvas = ({
                 <textarea
                   ref={textareaRef}
                   className="w-full markdown-editor bg-transparent resize-none focus:outline-none"
-                  placeholder="# Start writing your thoughts...\n\nUse **bold** and *italic* text\n- Create bullet lists\n1. Or numbered lists\n\n> Add blockquotes for emphasis"
                   defaultValue={file.content}
                   onChange={handleContentChange}
                   style={{
@@ -208,7 +207,6 @@ export const EditorCanvas = ({
                 <textarea
                   ref={textareaRef}
                   className="w-full markdown-editor bg-transparent resize-none focus:outline-none"
-                  placeholder="# Start writing your thoughts...\n\nUse **bold** and *italic* text\n- Create bullet lists\n1. Or numbered lists\n\n> Add blockquotes for emphasis"
                   defaultValue={file.content}
                   onChange={handleContentChange}
                   style={{
