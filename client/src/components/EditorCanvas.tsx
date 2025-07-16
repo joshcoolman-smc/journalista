@@ -2,10 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { JournalFile } from '../types/journal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Eye, Download, Menu, Code } from 'lucide-react';
+import { Eye, Download, Menu, Code, Columns } from 'lucide-react';
 import { MarkdownRenderer } from './MarkdownRenderer';
-import { FormattingToolbar } from './FormattingToolbar';
-import { useTextSelection } from '../hooks/useTextSelection';
 
 interface EditorCanvasProps {
   file: JournalFile | null;
@@ -22,9 +20,8 @@ export const EditorCanvas = ({
   onFileNameChange,
   sidebarVisible 
 }: EditorCanvasProps) => {
-  const [isPreviewMode, setIsPreviewMode] = useState(true);
+  const [viewMode, setViewMode] = useState<'edit' | 'preview' | 'split'>('edit');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { selection, cursorPosition, formatText } = useTextSelection(textareaRef);
 
   useEffect(() => {
     if (textareaRef.current && file) {
@@ -123,17 +120,38 @@ export const EditorCanvas = ({
               {getWordCount(file.content)} words
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsPreviewMode(!isPreviewMode)}
+              onClick={() => setViewMode('edit')}
               className="transition-zen"
-              style={{ color: isPreviewMode ? 'var(--zen-text-muted)' : 'var(--zen-accent)' }}
-              title={isPreviewMode ? 'Edit Markdown' : 'Preview'}
+              style={{ color: viewMode === 'edit' ? 'var(--zen-accent)' : 'var(--zen-text-muted)' }}
+              title="Edit Markdown"
             >
-              {isPreviewMode ? <Code className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              <Code className="h-4 w-4" />
             </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setViewMode('preview')}
+              className="transition-zen"
+              style={{ color: viewMode === 'preview' ? 'var(--zen-accent)' : 'var(--zen-text-muted)' }}
+              title="Preview"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setViewMode('split')}
+              className="transition-zen"
+              style={{ color: viewMode === 'split' ? 'var(--zen-accent)' : 'var(--zen-text-muted)' }}
+              title="Split View"
+            >
+              <Columns className="h-4 w-4" />
+            </Button>
+            <div className="w-px h-6 bg-gray-600 mx-2"></div>
             <Button
               variant="ghost"
               size="sm"
@@ -150,76 +168,7 @@ export const EditorCanvas = ({
 
       {/* Writing Area */}
       <div className="flex-1 overflow-hidden">
-        {isPreviewMode ? (
-          <div className="h-full p-8 overflow-y-auto relative">
-            <div className="max-w-4xl mx-auto">
-              {/* Textarea for editing in preview mode */}
-              <textarea
-                ref={textareaRef}
-                className="absolute inset-0 w-full h-full bg-transparent resize-none focus:outline-none zen-content transition-all duration-200"
-                defaultValue={file.content}
-                onChange={handleContentChange}
-                onBlur={() => {
-                  if (textareaRef.current) {
-                    textareaRef.current.style.pointerEvents = 'none';
-                    textareaRef.current.style.opacity = '0';
-                    textareaRef.current.style.color = 'transparent';
-                  }
-                }}
-                style={{
-                  color: 'transparent',
-                  minHeight: 'calc(100vh - 200px)',
-                  fontFamily: 'Crimson Text, serif',
-                  fontSize: '18px',
-                  lineHeight: '1.7',
-                  letterSpacing: '0.01em',
-                  zIndex: 10,
-                  opacity: 0,
-                  pointerEvents: 'none'
-                }}
-              />
-              
-              {/* Rendered markdown - clickable to focus textarea */}
-              <div 
-                className="relative cursor-text"
-                onClick={() => {
-                  if (textareaRef.current) {
-                    textareaRef.current.style.pointerEvents = 'auto';
-                    textareaRef.current.style.opacity = '0.1';
-                    textareaRef.current.style.color = 'var(--zen-text-primary)';
-                    textareaRef.current.focus();
-                  }
-                }}
-                style={{ zIndex: 2 }}
-              >
-                <MarkdownRenderer content={file.content} />
-                
-                {/* Subtle hint when content is empty */}
-                {!file.content.trim() && (
-                  <div 
-                    className="absolute top-0 left-0 pointer-events-none"
-                    style={{ 
-                      color: 'var(--zen-text-muted)',
-                      fontFamily: 'Crimson Text, serif',
-                      fontSize: '18px',
-                      lineHeight: '1.7',
-                      letterSpacing: '0.01em'
-                    }}
-                  >
-                    Click here to start writing...
-                  </div>
-                )}
-              </div>
-              
-              {/* Formatting Toolbar */}
-              <FormattingToolbar
-                onFormat={formatText}
-                position={cursorPosition}
-                visible={!!selection && isPreviewMode}
-              />
-            </div>
-          </div>
-        ) : (
+        {viewMode === 'edit' && (
           <div className="h-full p-8 overflow-y-auto relative">
             <div className="max-w-4xl mx-auto">
               <div className="markdown-editor-container">
@@ -240,13 +189,65 @@ export const EditorCanvas = ({
                   }}
                 />
               </div>
-              
-              {/* Formatting Toolbar */}
-              <FormattingToolbar
-                onFormat={formatText}
-                position={cursorPosition}
-                visible={!!selection && !isPreviewMode}
-              />
+            </div>
+          </div>
+        )}
+
+        {viewMode === 'preview' && (
+          <div className="h-full p-8 overflow-y-auto">
+            <div className="max-w-4xl mx-auto">
+              <MarkdownRenderer content={file.content} />
+              {!file.content.trim() && (
+                <div 
+                  className="text-center py-12"
+                  style={{ color: 'var(--zen-text-muted)' }}
+                >
+                  <p className="text-lg">No content to preview</p>
+                  <p className="text-sm mt-2">Switch to edit mode to start writing</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {viewMode === 'split' && (
+          <div className="h-full flex">
+            {/* Left side - Editor */}
+            <div className="w-1/2 p-4 overflow-y-auto" style={{ borderRight: '1px solid var(--zen-border)' }}>
+              <div className="markdown-editor-container">
+                <div className="markdown-editor-header"></div>
+                <textarea
+                  ref={textareaRef}
+                  className="w-full markdown-editor bg-transparent resize-none focus:outline-none"
+                  placeholder="# Start writing your thoughts...\n\nUse **bold** and *italic* text\n- Create bullet lists\n1. Or numbered lists\n\n> Add blockquotes for emphasis"
+                  defaultValue={file.content}
+                  onChange={handleContentChange}
+                  style={{
+                    minHeight: 'calc(100vh - 250px)',
+                    fontFamily: 'JetBrains Mono, monospace',
+                    fontSize: '14px',
+                    lineHeight: '1.6',
+                    border: 'none',
+                    borderRadius: '0 0 8px 8px'
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* Right side - Preview */}
+            <div className="w-1/2 p-4 overflow-y-auto">
+              <div className="max-w-full">
+                <MarkdownRenderer content={file.content} />
+                {!file.content.trim() && (
+                  <div 
+                    className="text-center py-12"
+                    style={{ color: 'var(--zen-text-muted)' }}
+                  >
+                    <p className="text-lg">Live preview</p>
+                    <p className="text-sm mt-2">Start typing to see your markdown rendered</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

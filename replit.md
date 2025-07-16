@@ -11,16 +11,14 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### January 16, 2025
-- **Default View Mode**: Changed default to preview mode instead of raw markdown editing
-- **Contextual Formatting Toolbar**: Added popup toolbar that appears when text is selected, supporting:
-  - Bold and italic formatting
-  - Unordered and ordered lists
-  - Heading levels 1-6 via dropdown menu
-- **Dual Editor Modes**: 
-  - Preview mode: Beautiful rendered markdown with inline editing capability
-  - Markdown mode: Code editor experience with monospace font and syntax highlighting
-- **Enhanced Markdown Support**: Extended renderer to support heading levels 4-6
-- **Improved User Experience**: Click-to-edit functionality in preview mode with smooth transitions
+- **Default View Mode**: Changed default to markdown editing mode (code editor style) as preferred by target audience
+- **Three View Modes**: 
+  - Edit mode: Code editor with monospace font and syntax highlighting (default)
+  - Preview mode: Read-only beautiful rendered markdown
+  - Split view: Live editor on left, preview on right with real-time updates
+- **Removed Complexity**: Eliminated contextual formatting toolbar and inline editing for simpler, focused experience
+- **Enhanced Markdown Support**: Extended renderer to support heading levels 1-6
+- **Improved Editor Experience**: JetBrains Mono font with proper code editor styling and header
 
 ## System Architecture
 
