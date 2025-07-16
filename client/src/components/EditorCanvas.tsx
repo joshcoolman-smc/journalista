@@ -18,7 +18,7 @@ export const EditorCanvas = ({
   onSidebarToggle, 
   sidebarVisible 
 }: EditorCanvasProps) => {
-  const [viewMode, setViewMode] = useState<'edit' | 'preview' | 'split'>('split');
+  const [viewMode, setViewMode] = useState<'edit' | 'preview' | 'split'>('edit');
   const [liveContent, setLiveContent] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -100,22 +100,22 @@ export const EditorCanvas = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setViewMode('split')}
-              className="transition-zen"
-              style={{ color: viewMode === 'split' ? 'var(--zen-accent)' : 'var(--zen-text-muted)' }}
-              title="Split View"
-            >
-              <Columns className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
               onClick={() => setViewMode('edit')}
               className="transition-zen"
               style={{ color: viewMode === 'edit' ? 'var(--zen-accent)' : 'var(--zen-text-muted)' }}
               title="Edit Markdown"
             >
               <Code className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setViewMode('split')}
+              className="transition-zen"
+              style={{ color: viewMode === 'split' ? 'var(--zen-accent)' : 'var(--zen-text-muted)' }}
+              title="Split View"
+            >
+              <Columns className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
