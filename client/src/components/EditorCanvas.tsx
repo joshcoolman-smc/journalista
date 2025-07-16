@@ -158,10 +158,21 @@ export const EditorCanvas = ({
       {/* Writing Area */}
       <div className="flex-1 overflow-hidden">
         {viewMode === 'edit' && (
-          <div className="h-full overflow-y-auto relative">
+          <div className="h-full flex flex-col">
+            <div 
+              className="px-4 py-2 text-xs font-medium border-b"
+              style={{
+                backgroundColor: 'var(--zen-bg-secondary)',
+                borderColor: 'var(--zen-border)',
+                color: 'var(--zen-text-muted)',
+                fontFamily: 'JetBrains Mono, monospace'
+              }}
+            >
+              Markdown Editor
+            </div>
             <textarea
               ref={textareaRef}
-              className="w-full h-full resize-none focus:outline-none p-8"
+              className="flex-1 w-full resize-none focus:outline-none p-8"
               defaultValue={file.content}
               onChange={handleContentChange}
               style={{
@@ -177,18 +188,31 @@ export const EditorCanvas = ({
         )}
 
         {viewMode === 'preview' && (
-          <div className="h-full p-8 overflow-y-auto">
-            <div className="max-w-4xl mx-auto">
-              <MarkdownRenderer content={file.content} />
-              {!file.content.trim() && (
-                <div 
-                  className="text-center py-12"
-                  style={{ color: 'var(--zen-text-muted)' }}
-                >
-                  <p className="text-lg">No content to preview</p>
-                  <p className="text-sm mt-2">Switch to edit mode to start writing</p>
-                </div>
-              )}
+          <div className="h-full flex flex-col">
+            <div 
+              className="px-4 py-2 text-xs font-medium border-b"
+              style={{
+                backgroundColor: 'var(--zen-bg-secondary)',
+                borderColor: 'var(--zen-border)',
+                color: 'var(--zen-text-muted)',
+                fontFamily: 'JetBrains Mono, monospace'
+              }}
+            >
+              Preview
+            </div>
+            <div className="flex-1 p-8 overflow-y-auto">
+              <div className="max-w-4xl mx-auto">
+                <MarkdownRenderer content={file.content} />
+                {!file.content.trim() && (
+                  <div 
+                    className="text-center py-12"
+                    style={{ color: 'var(--zen-text-muted)' }}
+                  >
+                    <p className="text-lg">No content to preview</p>
+                    <p className="text-sm mt-2">Switch to edit mode to start writing</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -196,10 +220,21 @@ export const EditorCanvas = ({
         {viewMode === 'split' && (
           <div className="h-full flex">
             {/* Left side - Editor */}
-            <div className="w-1/2 overflow-y-auto" style={{ borderRight: '1px solid var(--zen-border)' }}>
+            <div className="w-1/2 flex flex-col" style={{ borderRight: '1px solid var(--zen-border)' }}>
+              <div 
+                className="px-4 py-2 text-xs font-medium border-b"
+                style={{
+                  backgroundColor: 'var(--zen-bg-secondary)',
+                  borderColor: 'var(--zen-border)',
+                  color: 'var(--zen-text-muted)',
+                  fontFamily: 'JetBrains Mono, monospace'
+                }}
+              >
+                Markdown Editor
+              </div>
               <textarea
                 ref={textareaRef}
-                className="w-full h-full resize-none focus:outline-none p-4"
+                className="flex-1 w-full resize-none focus:outline-none p-4"
                 defaultValue={file.content}
                 onChange={handleContentChange}
                 style={{
@@ -214,18 +249,31 @@ export const EditorCanvas = ({
             </div>
             
             {/* Right side - Preview */}
-            <div className="w-1/2 p-4 overflow-y-auto">
-              <div className="max-w-full">
-                <MarkdownRenderer content={file.content} />
-                {!file.content.trim() && (
-                  <div 
-                    className="text-center py-12"
-                    style={{ color: 'var(--zen-text-muted)' }}
-                  >
-                    <p className="text-lg">Live preview</p>
-                    <p className="text-sm mt-2">Start typing to see your markdown rendered</p>
-                  </div>
-                )}
+            <div className="w-1/2 flex flex-col">
+              <div 
+                className="px-4 py-2 text-xs font-medium border-b"
+                style={{
+                  backgroundColor: 'var(--zen-bg-secondary)',
+                  borderColor: 'var(--zen-border)',
+                  color: 'var(--zen-text-muted)',
+                  fontFamily: 'JetBrains Mono, monospace'
+                }}
+              >
+                Preview
+              </div>
+              <div className="flex-1 p-4 overflow-y-auto">
+                <div className="max-w-full">
+                  <MarkdownRenderer content={file.content} />
+                  {!file.content.trim() && (
+                    <div 
+                      className="text-center py-12"
+                      style={{ color: 'var(--zen-text-muted)' }}
+                    >
+                      <p className="text-lg">Live preview</p>
+                      <p className="text-sm mt-2">Start typing to see your markdown rendered</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
