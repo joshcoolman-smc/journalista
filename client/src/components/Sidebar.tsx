@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { JournalFile } from '../types/journal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, File, Trash2, Search } from 'lucide-react';
+import { Plus, File, Trash2, Search, Edit3 } from 'lucide-react';
 
 interface SidebarProps {
   files: JournalFile[];
@@ -10,6 +10,7 @@ interface SidebarProps {
   onFileSelect: (file: JournalFile) => void;
   onFileCreate: () => void;
   onFileDelete: (fileId: string) => void;
+  onFileNameChange: (fileId: string, newName: string) => void;
   visible: boolean;
   onToggle: () => void;
 }
@@ -20,9 +21,12 @@ export const Sidebar = ({
   onFileSelect,
   onFileCreate,
   onFileDelete,
+  onFileNameChange,
   visible
 }: SidebarProps) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [editingFileId, setEditingFileId] = useState<string | null>(null);
+  const [editingFileName, setEditingFileName] = useState('');
 
   const filteredFiles = files.filter(file =>
     file.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -41,6 +45,46 @@ export const Sidebar = ({
     if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
     if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
     return date.toLocaleDateString();
+  };
+
+  const handleEditStart = (file: JournalFile) => {
+    setEditingFileId(file.id);
+    setEditingFileName(file.name.replace('.md', ''));
+  };
+
+  const handleEditComplete = () => {
+    if (editingFileId && editingFileName.trim()) {
+      onFileNameChange(editingFileId, editingFileName.trim());
+    }
+    setEditingFileId(null);
+    setEditingFileName('');
+  };
+
+  // Auto-start editing for new files
+  useEffect(() => {
+    if (files.length > 0) {
+      const latestFile = files[0];
+      const now = Date.now();
+      const fileAge = now - latestFile.createdAt.getTime();
+      // If the latest file is very new (less than 1 second old), start editing it
+      if (fileAge < 1000 && latestFile.name.startsWith('journal-')) {
+        handleEditStart(latestFile);
+      }
+    }
+  }, [files.length]);
+
+  const handleEditCancel = () => {
+    setEditingFileId(null);
+    setEditingFileName('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleEditComplete();
+    } else if (e.key === 'Escape') {
+      handleEditCancel();
+    }
   };
 
   if (!visible) return null;
@@ -126,21 +170,41 @@ export const Sidebar = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
-                    <File 
-                      className="h-4 w-4 flex-shrink-0"
-                      style={{ 
-                        color: currentFile?.id === file.id 
-                          ? 'var(--zen-accent)' 
-                          : 'var(--zen-text-muted)' 
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditStart(file);
                       }}
-                    />
+                      className="opacity-0 group-hover:opacity-100 transition-zen p-0 h-4 w-4 flex-shrink-0"
+                      style={{ color: 'var(--zen-text-muted)' }}
+                    >
+                      <Edit3 className="h-4 w-4" />
+                    </Button>
                     <div className="min-w-0 flex-1">
-                      <div 
-                        className="font-medium truncate"
-                        style={{ color: 'var(--zen-text-primary)' }}
-                      >
-                        {file.name.replace('.md', '')}
-                      </div>
+                      {editingFileId === file.id ? (
+                        <Input
+                          type="text"
+                          value={editingFileName}
+                          onChange={(e) => setEditingFileName(e.target.value)}
+                          onBlur={handleEditComplete}
+                          onKeyDown={handleKeyDown}
+                          className="text-sm font-medium bg-transparent border-0 border-b-2 border-transparent focus:border-b-2 focus:ring-0 px-0 rounded-none transition-zen"
+                          style={{
+                            color: 'var(--zen-text-primary)',
+                            borderBottomColor: 'var(--zen-accent)'
+                          }}
+                          autoFocus
+                        />
+                      ) : (
+                        <div 
+                          className="font-medium truncate"
+                          style={{ color: 'var(--zen-text-primary)' }}
+                        >
+                          {file.name.replace('.md', '')}
+                        </div>
+                      )}
                       <div 
                         className="text-sm"
                         style={{ color: 'var(--zen-text-muted)' }}

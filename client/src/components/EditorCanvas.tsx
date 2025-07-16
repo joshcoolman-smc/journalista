@@ -9,7 +9,6 @@ interface EditorCanvasProps {
   file: JournalFile | null;
   onContentChange: (content: string) => void;
   onSidebarToggle: () => void;
-  onFileNameChange: (name: string) => void;
   sidebarVisible: boolean;
 }
 
@@ -17,7 +16,6 @@ export const EditorCanvas = ({
   file, 
   onContentChange, 
   onSidebarToggle, 
-  onFileNameChange,
   sidebarVisible 
 }: EditorCanvasProps) => {
   const [viewMode, setViewMode] = useState<'edit' | 'preview' | 'split'>('split');
@@ -33,10 +31,7 @@ export const EditorCanvas = ({
     onContentChange(e.target.value);
   };
 
-  const handleFileNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newName = e.target.value;
-    onFileNameChange(newName.endsWith('.md') ? newName : `${newName}.md`);
-  };
+
 
   const getWordCount = (content: string) => {
     const words = content.trim().split(/\s+/).filter(word => word.length > 0);

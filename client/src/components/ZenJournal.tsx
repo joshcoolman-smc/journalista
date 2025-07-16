@@ -27,12 +27,13 @@ export const ZenJournal = () => {
     }
   }, [currentFile, triggerAutoSave]);
 
-  const handleFileNameChange = useCallback((name: string) => {
-    if (currentFile) {
-      const updatedFile = { ...currentFile, name };
+  const handleFileNameChange = useCallback((fileId: string, name: string) => {
+    const file = files.find(f => f.id === fileId);
+    if (file) {
+      const updatedFile = { ...file, name: name.endsWith('.md') ? name : `${name}.md` };
       saveFile(updatedFile);
     }
-  }, [currentFile, saveFile]);
+  }, [files, saveFile]);
 
   const handleCreateFile = useCallback(async () => {
     try {
@@ -104,6 +105,7 @@ export const ZenJournal = () => {
           onFileSelect={selectFile}
           onFileCreate={handleCreateFile}
           onFileDelete={handleDeleteFile}
+          onFileNameChange={handleFileNameChange}
           visible={sidebarVisible}
           onToggle={toggleSidebar}
         />
@@ -112,7 +114,6 @@ export const ZenJournal = () => {
           file={currentFile}
           onContentChange={handleContentChange}
           onSidebarToggle={toggleSidebar}
-          onFileNameChange={handleFileNameChange}
           sidebarVisible={sidebarVisible}
         />
       </div>

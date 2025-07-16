@@ -28,7 +28,7 @@ export const useFileStorage = () => {
     }
   };
 
-  const createFile = async (name: string = 'New Journal Entry') => {
+  const createFile = async (name: string = `journal-${Date.now()}.md`) => {
     try {
       const file = await fileStorage.createFile(name);
       setFiles(prev => [file, ...prev]);
