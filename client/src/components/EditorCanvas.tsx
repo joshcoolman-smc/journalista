@@ -19,16 +19,20 @@ export const EditorCanvas = ({
   sidebarVisible 
 }: EditorCanvasProps) => {
   const [viewMode, setViewMode] = useState<'edit' | 'preview' | 'split'>('split');
+  const [liveContent, setLiveContent] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (textareaRef.current && file) {
       textareaRef.current.value = file.content;
+      setLiveContent(file.content);
     }
   }, [file?.id]);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onContentChange(e.target.value);
+    const newContent = e.target.value;
+    setLiveContent(newContent); // Update live preview immediately
+    onContentChange(newContent); // This will trigger auto-save debounced
   };
 
 
@@ -37,6 +41,9 @@ export const EditorCanvas = ({
     const words = content.trim().split(/\s+/).filter(word => word.length > 0);
     return words.length;
   };
+
+  // Use live content for preview to show real-time updates
+  const previewContent = liveContent || file?.content || '';
 
   const exportFile = () => {
     if (!file) return;
@@ -190,8 +197,8 @@ export const EditorCanvas = ({
             </div>
             <div className="flex-1 p-8 overflow-y-auto">
               <div className="max-w-4xl mx-auto">
-                <MarkdownRenderer content={file.content} />
-                {!file.content.trim() && (
+                <MarkdownRenderer content={previewContent} />
+                {!previewContent.trim() && (
                   <div 
                     className="text-center py-12"
                     style={{ color: 'var(--zen-text-muted)' }}
@@ -219,7 +226,7 @@ export const EditorCanvas = ({
                 }}
               >
                 <span>Markdown Editor</span>
-                <span>{getWordCount(file.content)} words</span>
+                <span>{getWordCount(previewContent)} words</span>
               </div>
               <textarea
                 ref={textareaRef}
@@ -252,8 +259,8 @@ export const EditorCanvas = ({
               </div>
               <div className="flex-1 p-4 overflow-y-auto">
                 <div className="max-w-full">
-                  <MarkdownRenderer content={file.content} />
-                  {!file.content.trim() && (
+                  <MarkdownRenderer content={previewContent} />
+                  {!previewContent.trim() && (
                     <div 
                       className="text-center py-12"
                       style={{ color: 'var(--zen-text-muted)' }}
