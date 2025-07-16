@@ -153,16 +153,21 @@ export class GitHubSync implements GitHubSyncService {
       if (!response.ok) {
         if (response.status === 404) {
           // Directory doesn't exist yet
+          console.log('Entries directory does not exist - returning empty array');
           return [];
         }
         throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
       }
 
       const files = await response.json();
+      console.log(`Found ${files.length} files in GitHub repository`);
+      
       const journalFiles: JournalFile[] = [];
 
       for (const fileInfo of files) {
         if (fileInfo.type === 'file' && fileInfo.name.endsWith('.md')) {
+          console.log(`Processing file: ${fileInfo.name} with SHA: ${fileInfo.sha}`);
+          
           const fileResponse = await fetch(fileInfo.download_url);
           const content = await fileResponse.text();
 
@@ -183,8 +188,10 @@ export class GitHubSync implements GitHubSyncService {
         }
       }
 
+      console.log(`Loaded ${journalFiles.length} journal files from GitHub`);
       return journalFiles;
     } catch (error) {
+      console.error('Error pulling changes from GitHub:', error);
       throw new Error(`Failed to pull changes from GitHub: ${error}`);
     }
   }
@@ -201,6 +208,8 @@ export class GitHubSync implements GitHubSyncService {
     const path = `entries/${file.name}`;
     
     try {
+      console.log(`Attempting to delete file: ${path} with SHA: ${file.githubSha}`);
+      
       const response = await fetch(
         `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/contents/${path}`,
         {
@@ -217,13 +226,20 @@ export class GitHubSync implements GitHubSyncService {
         }
       );
 
+      console.log(`Delete response status: ${response.status} ${response.statusText}`);
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('GitHub delete error:', errorData);
         throw new Error(`GitHub API error: ${errorData.message || response.statusText}`);
       }
 
+      const responseData = await response.json();
+      console.log('Delete response data:', responseData);
+
       this.updateLastSyncTime();
     } catch (error) {
+      console.error('Delete file error:', error);
       throw new Error(`Failed to delete file from GitHub: ${error}`);
     }
   }
