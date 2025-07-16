@@ -88,6 +88,48 @@ export const useFileStorage = () => {
     }
   };
 
+  const createTemporaryFile = (name: string = `journal-${Date.now()}.md`) => {
+    // Create a temporary file object that hasn't been saved yet
+    const tempFile: JournalFile = {
+      id: `temp-${Date.now()}`,
+      name,
+      content: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      // No githubSha or lastSyncedAt since it's not saved yet
+    };
+    
+    setFiles(prev => [tempFile, ...prev]);
+    setCurrentFile(tempFile);
+    return tempFile;
+  };
+
+  const confirmFileCreation = async (tempFile: JournalFile, finalName: string) => {
+    try {
+      // Remove the temporary file from the list
+      setFiles(prev => prev.filter(f => f.id !== tempFile.id));
+      
+      // Create the actual file with the confirmed name
+      const finalFile = await createFile(finalName.endsWith('.md') ? finalName : `${finalName}.md`);
+      
+      // If there was content in the temp file, update the final file
+      if (tempFile.content) {
+        await saveFile({ ...finalFile, content: tempFile.content });
+      }
+      
+      return finalFile;
+    } catch (error) {
+      console.error('Failed to confirm file creation:', error);
+      throw error;
+    }
+  };
+
+  const cancelFileCreation = (tempFile: JournalFile) => {
+    setFiles(prev => prev.filter(f => f.id !== tempFile.id));
+    const remainingFiles = files.filter(f => f.id !== tempFile.id);
+    setCurrentFile(remainingFiles.length > 0 ? remainingFiles[0] : null);
+  };
+
   const saveFile = async (file: JournalFile) => {
     try {
       let finalFile = file;
@@ -158,6 +200,9 @@ export const useFileStorage = () => {
     currentFile,
     loading,
     createFile,
+    createTemporaryFile,
+    confirmFileCreation,
+    cancelFileCreation,
     saveFile,
     deleteFile,
     selectFile,

@@ -18,6 +18,9 @@ export const ZenJournal = () => {
     currentFile,
     loading,
     createFile,
+    createTemporaryFile,
+    confirmFileCreation,
+    cancelFileCreation,
     saveFile,
     deleteFile,
     selectFile,
@@ -34,23 +37,49 @@ export const ZenJournal = () => {
     }
   }, [currentFile, triggerAutoSave]);
 
-  const handleFileNameChange = useCallback((fileId: string, name: string) => {
+  const handleFileNameChange = useCallback(async (fileId: string, name: string) => {
     const file = files.find(f => f.id === fileId);
     if (file) {
-      const updatedFile = { ...file, name: name.endsWith('.md') ? name : `${name}.md` };
-      saveFile(updatedFile);
+      // Check if this is a temporary file
+      if (file.id.startsWith('temp-')) {
+        // Confirm the temporary file creation with the new name
+        try {
+          await confirmFileCreation(file, name);
+        } catch (error) {
+          console.error('Failed to confirm file creation:', error);
+        }
+      } else {
+        // Regular file name change
+        const updatedFile = { ...file, name: name.endsWith('.md') ? name : `${name}.md` };
+        saveFile(updatedFile);
+      }
     }
-  }, [files, saveFile]);
+  }, [files, saveFile, confirmFileCreation]);
 
-  const handleCreateFile = useCallback(async () => {
+  const handleCreateFile = useCallback(() => {
     try {
-      await createFile();
+      // Create a temporary file that will be confirmed later
+      const tempFile = createTemporaryFile();
+      // The sidebar will handle the naming and confirmation
     } catch (error) {
-      console.error('Failed to create file:', error);
+      console.error('Failed to create temporary file:', error);
     }
-  }, [createFile]);
+  }, [createTemporaryFile]);
 
   const handleDeleteFile = useCallback(async (fileId: string) => {
+    const file = files.find(f => f.id === fileId);
+    
+    // If it's a temporary file, just cancel it without confirmation
+    if (file && file.id.startsWith('temp-')) {
+      try {
+        cancelFileCreation(file);
+      } catch (error) {
+        console.error('Failed to cancel file creation:', error);
+      }
+      return;
+    }
+    
+    // For regular files, ask for confirmation
     if (window.confirm('Are you sure you want to delete this file?')) {
       try {
         await deleteFile(fileId);
@@ -58,7 +87,7 @@ export const ZenJournal = () => {
         console.error('Failed to delete file:', error);
       }
     }
-  }, [deleteFile]);
+  }, [deleteFile, cancelFileCreation, files]);
 
   const toggleSidebar = useCallback(() => {
     setSidebarVisible(prev => !prev);

@@ -49,31 +49,55 @@ export const Sidebar = ({
 
   const handleEditStart = (file: JournalFile) => {
     setEditingFileId(file.id);
-    setEditingFileName(file.name.replace('.md', ''));
+    const baseName = file.name.replace('.md', '');
+    setEditingFileName(baseName);
+    
+    // For temporary files, we want to select all text so user can type over it
+    setTimeout(() => {
+      const input = document.querySelector(`input[value="${baseName}"]`) as HTMLInputElement;
+      if (input) {
+        input.select();
+      }
+    }, 0);
   };
 
   const handleEditComplete = () => {
     if (editingFileId && editingFileName.trim()) {
-      onFileNameChange(editingFileId, editingFileName.trim());
+      // Check if this is a temporary file
+      const file = files.find(f => f.id === editingFileId);
+      if (file && file.id.startsWith('temp-')) {
+        // For temporary files, we need to confirm creation
+        // This should be handled by the parent component
+        onFileNameChange(editingFileId, editingFileName.trim());
+      } else {
+        // For regular files, just update the name
+        onFileNameChange(editingFileId, editingFileName.trim());
+      }
     }
     setEditingFileId(null);
     setEditingFileName('');
   };
 
-  // Auto-start editing for new files
+  // Auto-start editing for new temporary files
   useEffect(() => {
     if (files.length > 0) {
       const latestFile = files[0];
-      const now = Date.now();
-      const fileAge = now - latestFile.createdAt.getTime();
-      // If the latest file is very new (less than 1 second old), start editing it
-      if (fileAge < 1000 && latestFile.name.startsWith('journal-')) {
+      // Check if this is a temporary file (id starts with 'temp-')
+      if (latestFile.id.startsWith('temp-')) {
         handleEditStart(latestFile);
       }
     }
   }, [files.length]);
 
   const handleEditCancel = () => {
+    // If canceling a temporary file, we need to remove it
+    if (editingFileId) {
+      const file = files.find(f => f.id === editingFileId);
+      if (file && file.id.startsWith('temp-')) {
+        // Remove the temporary file
+        onFileDelete(editingFileId);
+      }
+    }
     setEditingFileId(null);
     setEditingFileName('');
   };
