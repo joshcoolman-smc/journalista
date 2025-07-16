@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Zen theme colors */
+  --zen-bg-primary: hsl(0, 0%, 3.9%);
+  --zen-bg-secondary: hsl(0, 0%, 10.2%);
+  --zen-bg-tertiary: hsl(0, 0%, 16.5%);
+  --zen-text-primary: hsl(0, 0%, 89.8%);
+  --zen-text-secondary: hsl(0, 0%, 63.9%);
+  --zen-text-muted: hsl(0, 0%, 45.1%);
+  --zen-accent: hsl(214, 90%, 54%);
+  --zen-border: hsl(0, 0%, 14.9%);
+  --zen-success: hsl(142, 76%, 36%);
+}
+
+.dark {
+  --background: hsl(0, 0%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(0, 0%, 14.9%);
+  --muted-foreground: hsl(0, 0%, 63.9%);
+  --popover: hsl(0, 0%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(0, 0%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(0, 0%, 14.9%);
+  --input: hsl(0, 0%, 14.9%);
+  --primary: hsl(214, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(0, 0%, 14.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(0, 0%, 14.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(0, 0%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    background-color: var(--zen-bg-primary);
+    color: var(--zen-text-primary);
+    font-family: 'Inter', sans-serif;
+  }
+
+  .zen-content {
+    font-family: 'Crimson Text', serif;
+    font-size: 18px;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+  }
+
+  .zen-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--zen-bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--zen-bg-tertiary);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--zen-text-muted);
+  }
+
+  /* Markdown styles */
+  .markdown-content {
+    @apply zen-content;
+  }
+
+  .markdown-content h1 {
+    @apply text-4xl font-bold mb-8 mt-10 pb-2;
+    color: var(--zen-text-primary);
+    border-bottom: 2px solid var(--zen-border);
+  }
+
+  .markdown-content h2 {
+    @apply text-3xl font-bold mb-6 mt-8 pb-2;
+    color: var(--zen-text-primary);
+    border-bottom: 1px solid var(--zen-border);
+  }
+
+  .markdown-content h3 {
+    @apply text-2xl font-semibold mb-4 mt-6;
+    color: var(--zen-text-primary);
+  }
+
+  .markdown-content p {
+    @apply mb-6 leading-relaxed;
+    color: var(--zen-text-primary);
+  }
+
+  .markdown-content strong {
+    @apply font-bold;
+    color: var(--zen-text-primary);
+    text-shadow: 0 0 1px var(--zen-text-primary);
+  }
+
+  .markdown-content em {
+    @apply italic;
+    color: var(--zen-text-primary);
+    font-style: italic;
+  }
+
+  .markdown-content blockquote {
+    @apply border-l-4 pl-6 py-4 mb-6 italic rounded-r-lg;
+    border-color: var(--zen-accent);
+    color: var(--zen-text-secondary);
+    background-color: var(--zen-bg-secondary);
+  }
+
+  .markdown-content ul {
+    @apply mb-6 pl-8;
+    list-style-type: disc;
+  }
+
+  .markdown-content ol {
+    @apply mb-6 pl-8;
+    list-style-type: decimal;
+  }
+
+  .markdown-content li {
+    @apply mb-3 leading-relaxed;
+    color: var(--zen-text-primary);
+  }
+
+  .markdown-content ul > li {
+    position: relative;
+  }
+
+  .markdown-content ul > li::marker {
+    color: var(--zen-accent);
+    font-size: 1.2em;
+  }
+
+  .markdown-content ol > li::marker {
+    color: var(--zen-accent);
+    font-weight: bold;
+  }
+
+  .markdown-content code {
+    @apply zen-mono px-2 py-1 rounded text-sm;
+    background-color: var(--zen-bg-tertiary);
+    color: var(--zen-accent);
+    border: 1px solid var(--zen-border);
+  }
+
+  .markdown-content pre {
+    @apply zen-mono p-6 rounded-lg mb-6 overflow-x-auto;
+    background-color: var(--zen-bg-secondary);
+    border: 1px solid var(--zen-border);
+  }
+
+  .markdown-content pre code {
+    @apply p-0 bg-transparent border-0;
+    color: var(--zen-text-primary);
+  }
+
+  .markdown-content br {
+    @apply mb-2;
+  }
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Focus states */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent;
+  --tw-ring-color: var(--zen-accent);
+}
+
+/* Transitions */
+.transition-zen {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
