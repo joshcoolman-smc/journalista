@@ -95,17 +95,6 @@ export const EditorCanvas = ({
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            {!sidebarVisible && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onSidebarToggle}
-                className="transition-zen"
-                style={{ color: 'var(--zen-text-secondary)' }}
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
-            )}
             <Input
               type="text"
               value={file.name.replace('.md', '')}

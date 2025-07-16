@@ -97,16 +97,9 @@ export const Sidebar = ({
               {searchTerm ? 'No files match your search' : 'No journal entries yet'}
             </p>
             {!searchTerm && (
-              <Button
-                onClick={onFileCreate}
-                className="text-sm"
-                style={{ 
-                  backgroundColor: 'var(--zen-accent)',
-                  color: 'white'
-                }}
-              >
-                Create your first entry
-              </Button>
+              <p className="text-xs" style={{ color: 'var(--zen-text-muted)' }}>
+                Click the + button above to create your first entry
+              </p>
             )}
           </div>
         ) : (
