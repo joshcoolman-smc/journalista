@@ -137,6 +137,13 @@ export const EditorCanvas = ({
               <Download className="h-4 w-4" />
             </Button>
           </div>
+          
+          {/* Show file name when sidebar is collapsed */}
+          {!sidebarVisible && (
+            <div className="text-sm font-medium" style={{ color: 'var(--zen-text-primary)' }}>
+              {file.name.replace('.md', '')}
+            </div>
+          )}
         </div>
       </div>
 
