@@ -94,20 +94,8 @@ export const EditorCanvas = ({
         }}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Input
-              type="text"
-              value={file.name.replace('.md', '')}
-              onChange={handleFileNameChange}
-              className="text-lg font-medium bg-transparent border-0 border-b-2 border-transparent focus:border-b-2 focus:ring-0 px-0 rounded-none transition-zen"
-              style={{
-                color: 'var(--zen-text-primary)',
-                borderBottomColor: 'transparent'
-              }}
-            />
-            <div className="text-sm" style={{ color: 'var(--zen-text-muted)' }}>
-              {getWordCount(file.content)} words
-            </div>
+          <div className="text-sm" style={{ color: 'var(--zen-text-muted)' }}>
+            {getWordCount(file.content)} words
           </div>
           <div className="flex items-center space-x-2">
             <Button
