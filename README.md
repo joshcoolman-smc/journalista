@@ -65,7 +65,7 @@ npm install
 npm run dev
 ```
 
-The application will be available at `http://localhost:5000`
+The application will be available at `http://localhost:3000`
 
 #### Build for Production
 ```bash
@@ -77,6 +77,65 @@ npm start
 ```bash
 npm run check
 ```
+
+## Deployment
+
+### Easy Deployment - Static Site with Express
+
+journalista is designed for simple deployment. The server is just a lightweight Express app that serves static files in production - **no database, no authentication, no complex backend**.
+
+### Port Configuration
+
+**Default Port**: 3000  
+**Environment Variable**: `PORT`
+
+To change the port:
+```bash
+# Option 1: Set environment variable (temporary)
+PORT=8080 npm start
+```
+
+**Option 2: Permanent change** - Edit `server/index.ts`:
+```typescript
+// Find this line (around line 62) and change "3000" to your desired port:
+const port = parseInt(process.env.PORT || "3000", 10);
+//                                      ^^^^^^
+//                          Change this number to your preferred port
+```
+
+### Deployment Options
+
+#### Option 1: Static Site Hosts (Easiest)
+Since the app is client-side only, you can deploy just the built files:
+```bash
+npm run build
+# Deploy the dist/public folder to:
+# - Vercel, Netlify, GitHub Pages, etc.
+```
+
+#### Option 2: Node.js Hosts (Full-stack ready)
+Deploy the full Express app for future API expansion:
+```bash
+# Platforms: Railway, Render, DigitalOcean, AWS, etc.
+npm run build
+npm start
+```
+
+#### Option 3: Docker
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+### Environment Variables
+- `PORT` - Server port (default: 3000)
+- `NODE_ENV` - Environment (development/production)
 
 ## Architecture
 
