@@ -9,7 +9,7 @@ import { useFileStorage } from '../hooks/useFileStorage';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { JournalFile } from '../types/journal';
 
-export const ZenJournal = () => {
+export const Journalista = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const {
     files,
@@ -140,7 +140,7 @@ export const ZenJournal = () => {
             </svg>
           </button>
           <h1 className="text-xl font-medium" style={{ color: 'var(--zen-text-primary)' }}>
-            Zen Journal
+            journalista!
           </h1>
         </div>
         

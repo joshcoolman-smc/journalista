@@ -42,7 +42,7 @@ This is a **privacy-first journaling application** with local-first storage and 
 ## File Structure & Key Components
 
 ### Frontend (`client/src/`)
-- `components/ZenJournal.tsx` - Main application component
+- `components/Journalista.tsx` - Main application component
 - `components/EditorCanvas.tsx` - Markdown editor with 3 view modes (edit/split/preview)
 - `components/Sidebar.tsx` - File management sidebar
 - `components/GitHubConnection.tsx` - GitHub integration UI

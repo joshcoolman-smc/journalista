@@ -1,15 +1,18 @@
 import { JournalFile, GitHubConfig, GitHubSyncService, GitHubRepository, RepositoryAnalysis } from '../types/journal';
 
-// Enhanced logging for debugging
+// Enhanced logging for debugging (production-ready logging)
 const debugLog = (message: string, data?: any) => {
-  const timestamp = new Date().toISOString();
-  const logData = data ? ` | Data: ${JSON.stringify(data)}` : '';
-  console.log(`[GitHub Sync ${timestamp}] ${message}${logData}`);
+  // Only log in development mode
+  if (process.env.NODE_ENV === 'development') {
+    const timestamp = new Date().toISOString();
+    const logData = data ? ` | Data: ${JSON.stringify(data)}` : '';
+    console.log(`[GitHub Sync ${timestamp}] ${message}${logData}`);
+  }
 };
 
-const GITHUB_CONFIG_KEY = 'zen-journal-github-config';
-const GITHUB_SYNC_KEY = 'zen-journal-last-sync';
-const GITHUB_TOKEN_KEY = 'zen-journal-github-token';
+const GITHUB_CONFIG_KEY = 'journalista-github-config';
+const GITHUB_SYNC_KEY = 'journalista-last-sync';
+const GITHUB_TOKEN_KEY = 'journalista-github-token';
 
 interface GitHubFileResponse {
   content: string;
@@ -73,7 +76,7 @@ export class GitHubSync implements GitHubSyncService {
           },
           body: JSON.stringify({
             name: config.repo,
-            description: 'Personal journal entries managed by Zen Journal',
+            description: 'Personal journal entries managed by journalista',
             private: true,
             auto_init: true
           })
@@ -306,8 +309,6 @@ export class GitHubSync implements GitHubSyncService {
     const path = `entries/${file.name}`;
     
     try {
-      console.log(`Attempting to delete file: ${path} with SHA: ${file.githubSha}`);
-      
       const response = await fetch(
         `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/contents/${path}`,
         {
@@ -325,16 +326,13 @@ export class GitHubSync implements GitHubSyncService {
         }
       );
 
-      console.log(`Delete response status: ${response.status} ${response.statusText}`);
-
       if (!response.ok) {
         const errorData = await response.json();
         console.error('GitHub delete error:', errorData);
         throw new Error(`GitHub API error: ${errorData.message || response.statusText}`);
       }
 
-      const responseData = await response.json();
-      console.log('Delete response data:', responseData);
+      await response.json();
 
       this.updateLastSyncTime();
     } catch (error) {

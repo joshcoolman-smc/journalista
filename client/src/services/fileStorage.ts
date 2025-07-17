@@ -1,6 +1,6 @@
 import { JournalFile, FileStorageService } from '../types/journal';
 
-const STORAGE_KEY = 'zen-journal-files';
+const STORAGE_KEY = 'journalista-files';
 
 export class FileStorage implements FileStorageService {
   private files: Map<string, JournalFile> = new Map();

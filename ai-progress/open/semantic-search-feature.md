@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document outlines the requirements for implementing intelligent semantic search capabilities in the Zen Journal application. The feature will enable users to search across journal entries using natural language queries, finding relevant content based on meaning and context rather than just keyword matching.
+This document outlines the requirements for implementing intelligent semantic search capabilities in the journalista application. The feature will enable users to search across journal entries using natural language queries, finding relevant content based on meaning and context rather than just keyword matching.
 
 ## Problem Statement
 
@@ -254,8 +254,8 @@ interface SearchResult {
 
 ### Conclusion
 
-Implementing semantic search will transform the Zen Journal from a simple writing tool into an intelligent knowledge management system. The feature addresses real user needs for discovering and connecting ideas across their writing history.
+Implementing semantic search will transform the journalista from a simple writing tool into an intelligent knowledge management system. The feature addresses real user needs for discovering and connecting ideas across their writing history.
 
 The hybrid architecture approach provides the best balance of privacy, performance, and capability. Starting with a solid foundation and iterating based on user feedback will ensure successful adoption and long-term value.
 
-This enhancement positions Zen Journal as a leader in intelligent personal knowledge management, setting the stage for future AI-powered writing and reflection tools.
+This enhancement positions journalista as a leader in intelligent personal knowledge management, setting the stage for future AI-powered writing and reflection tools.

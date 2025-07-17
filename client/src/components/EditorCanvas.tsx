@@ -24,12 +24,6 @@ export const EditorCanvas = ({
 
   useEffect(() => {
     if (textareaRef.current && file) {
-      console.log('EditorCanvas received file:', {
-        id: file.id,
-        name: file.name,
-        contentLength: file.content?.length || 0,
-        contentPreview: file.content?.substring(0, 100) || 'No content'
-      });
       textareaRef.current.value = file.content;
       setLiveContent(file.content);
     }
@@ -67,7 +61,7 @@ export const EditorCanvas = ({
       <main className="flex-1 flex flex-col items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-medium mb-4" style={{ color: 'var(--zen-text-primary)' }}>
-            Welcome to Zen Journal
+            Welcome to journalista!
           </h2>
           <p className="text-lg mb-6" style={{ color: 'var(--zen-text-muted)' }}>
             Create a new journal entry to start writing

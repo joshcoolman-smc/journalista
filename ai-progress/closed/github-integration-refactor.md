@@ -231,7 +231,7 @@ SettingsPanel (new)
 ### Internal Dependencies
 - **Existing GitHub Sync**: Build upon current sync functionality
 - **File Storage**: Ensure compatibility with local storage and sync systems
-- **UI Theme**: Maintain consistency with existing Zen Journal theming
+- **UI Theme**: Maintain consistency with existing journalista theming
 
 ## Future Enhancements
 

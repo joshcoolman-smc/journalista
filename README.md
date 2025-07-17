@@ -1,8 +1,8 @@
-# Zen Journal
+# journalista
 
 A minimalist, privacy-first markdown journaling application built with React and Express. Write your thoughts in a distraction-free environment with optional GitHub backup.
 
-![Zen Journal Interface](https://img.shields.io/badge/Interface-Clean%20%26%20Minimal-blue)
+![journalista Interface](https://img.shields.io/badge/Interface-Clean%20%26%20Minimal-blue)
 ![Privacy First](https://img.shields.io/badge/Privacy-First-green)
 ![GitHub Backup](https://img.shields.io/badge/GitHub-Backup-orange)
 
@@ -10,12 +10,13 @@ A minimalist, privacy-first markdown journaling application built with React and
 
 ### 📝 Writing Experience
 - **Markdown Support** - Write with rich formatting using standard markdown syntax
-- **Three View Modes** - Split view (default), markdown editor, and live preview
+- **Three View Modes** - Edit mode (default), split view, and preview mode
 - **Auto-save** - Your work is saved automatically every second
 - **Distraction-free** - Clean, minimal interface focused on writing
+- **File Management** - Create, rename, and delete journal entries easily
 
 ### 🔒 Privacy & Security
-- **Local-first** - All data stored locally on your device
+- **Local-first** - All data stored locally in your browser
 - **No authentication required** - Start writing immediately
 - **Privacy-first design** - No tracking, no analytics, no data collection
 - **Your data, your control** - You own and control all your content
@@ -26,25 +27,25 @@ A minimalist, privacy-first markdown journaling application built with React and
 - **Version history** - Full git history of all your changes
 - **Conflict resolution** - Handle simultaneous edits gracefully
 - **Repository auto-creation** - Creates repository if it doesn't exist
+- **Repository browsing** - Connect to existing repositories or create new ones
 
 ### 🛠️ Technical Features
 - **Responsive design** - Works on desktop, tablet, and mobile
-- **File management** - Create, rename, and delete journal entries
-- **Search functionality** - Find entries by name or content
-- **Export data** - Download all your entries as JSON
-- **Clear all data** - Complete reset when needed
+- **Local storage** - All data persists in your browser
+- **Offline-first** - Works without internet connection
+- **Modern UI** - Built with Radix UI components and Tailwind CSS
 
 ## Getting Started
 
 ### For Writers (No Technical Setup Required)
 
-1. **Visit the deployed application** (link coming soon)
-2. **Start writing** - No account needed, just open and write
+1. **Clone and run locally** (see developer setup below) or wait for hosted version
+2. **Start writing** - No account needed, just open and start typing
 3. **Optional GitHub setup:**
-   - Click "Connect GitHub" in the header
-   - Enter your GitHub username and desired repository name
-   - Create a Personal Access Token with 'repo' scope
-   - The app will automatically create the repository if it doesn't exist
+   - Click the settings icon in the header
+   - Connect to GitHub with your Personal Access Token
+   - Choose an existing repository or create a new one
+   - Your entries will sync automatically to the `entries/` folder
 
 ### For Developers
 
@@ -54,8 +55,8 @@ A minimalist, privacy-first markdown journaling application built with React and
 
 #### Installation
 ```bash
-git clone https://github.com/yourusername/zen-journal.git
-cd zen-journal
+git clone https://github.com/joshcoolman/journalista.git
+cd journalista
 npm install
 ```
 
@@ -69,6 +70,12 @@ The application will be available at `http://localhost:5000`
 #### Build for Production
 ```bash
 npm run build
+npm start
+```
+
+#### Type Checking
+```bash
+npm run check
 ```
 
 ## Architecture
@@ -79,40 +86,42 @@ npm run build
 - **Tailwind CSS** for styling
 - **Radix UI** for accessible components
 - **TanStack Query** for state management
+- **Wouter** for lightweight routing
 
 ### Backend
 - **Express.js** with TypeScript
-- **PostgreSQL** with Drizzle ORM (for future features)
+- **Stateless server** - serves static files only
 - **Vite integration** for seamless development
+- **No database** - completely client-side data storage
 
 ### Storage Strategy
-- **Primary**: Browser localStorage for instant access
-- **Secondary**: GitHub repository for backup and sync
-- **Fallback**: No data loss - works offline
+- **Primary**: Browser localStorage for instant access and privacy
+- **Secondary**: GitHub repository for backup and cross-device sync
+- **No server storage** - your data stays on your device and your GitHub account
 
 ## Security Model
 
 ### Local Data
-- All journal entries stored in browser localStorage
+- All journal entries stored in browser localStorage only
 - No server-side data persistence for user content
 - Data never leaves your device unless you choose GitHub sync
 
 ### GitHub Integration
 - Personal Access Tokens stored locally (not on server)
-- Repository access controlled by user's GitHub permissions
-- All sync operations happen client-side
+- Repository access controlled by your GitHub permissions
+- All sync operations happen client-side via GitHub API
 - Uses HTTPS for all GitHub API communications
 
 ### Public Deployment Safety
 - **No shared data** - Each user's data is completely isolated
 - **No authentication backend** - No user accounts or session management
-- **Stateless server** - Server only serves static files
-- **No API keys exposed** - All GitHub tokens are user-provided
+- **Stateless server** - Server only serves static files and handles no user data
+- **No API keys exposed** - All GitHub tokens are user-provided and stored locally
 
 ## Repository Structure
 
 ```
-zen-journal/
+journalista/
 ├── client/                 # React frontend
 │   ├── src/
 │   │   ├── components/     # UI components
@@ -120,8 +129,7 @@ zen-journal/
 │   │   ├── services/      # Business logic
 │   │   └── types/         # TypeScript definitions
 ├── server/                # Express backend
-├── shared/                # Shared types and schemas
-└── attached_assets/       # Design and documentation
+└── ai-progress/           # Development planning documents
 ```
 
 ## GitHub Integration Setup
@@ -130,7 +138,7 @@ zen-journal/
 
 1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
 2. Click "Generate new token (classic)"
-3. Set description: "Zen Journal"
+3. Set description: "journalista"
 4. Select scope: `repo` (Full control of private repositories)
 5. Click "Generate token"
 6. Copy the token immediately (you won't see it again)
@@ -145,10 +153,25 @@ your-journal-repo/
 │   ├── 2025-01-16-morning-thoughts.md
 │   ├── 2025-01-15-project-ideas.md
 │   └── daily-journal.md
-├── .zenjournal/
-│   └── metadata.json
 └── README.md
 ```
+
+## View Modes
+
+### Edit Mode (Default)
+- Full-width markdown editor
+- Word count display
+- Focused writing experience
+
+### Split Mode
+- Side-by-side markdown editor and live preview
+- Real-time rendering as you type
+- Ideal for formatting-heavy content
+
+### Preview Mode
+- Full-width rendered markdown view
+- Clean reading experience
+- Perfect for reviewing your entries
 
 ## Privacy & Data Policy
 
@@ -166,12 +189,16 @@ your-journal-repo/
 ### Data Ownership
 - You own all your content
 - You control what gets synced to GitHub
-- You can export or delete all data at any time
+- You can clear all data at any time
 - No vendor lock-in - all data is in standard markdown format
 
-## Contributing
+## Development Philosophy
 
-This project is not currently accepting contributions. It's designed as a personal journaling tool with a focus on simplicity and privacy.
+This project demonstrates:
+- **AI-assisted development** - Built collaboratively with Claude Code
+- **Privacy-first design** - Your data belongs to you
+- **Local-first architecture** - Works offline, syncs when you want
+- **Clean, maintainable code** - TypeScript throughout with good patterns
 
 ## License
 
