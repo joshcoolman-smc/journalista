@@ -2,10 +2,9 @@ import { useState, useCallback } from 'react';
 import { Sidebar } from './Sidebar';
 import { EditorCanvas } from './EditorCanvas';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
-import { GitHubConnection } from './GitHubConnection';
 import { SyncIndicator } from './SyncIndicator';
 import { ConflictResolution } from './ConflictResolution';
-import { DataManagement } from './DataManagement';
+import { SettingsPanel } from './SettingsPanel';
 import { useFileStorage } from '../hooks/useFileStorage';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { JournalFile } from '../types/journal';
@@ -23,6 +22,8 @@ export const ZenJournal = () => {
     saveFile,
     deleteFile,
     selectFile,
+    clearAllData,
+    refreshFiles,
     githubSync
   } = useFileStorage();
 
@@ -78,53 +79,33 @@ export const ZenJournal = () => {
       return;
     }
     
-    // For regular files, ask for confirmation
-    if (window.confirm('Are you sure you want to delete this file?')) {
-      try {
-        await deleteFile(fileId);
-      } catch (error) {
-        console.error('Failed to delete file:', error);
+    // For regular files, ask for context-aware confirmation
+    if (file) {
+      let confirmMessage: string;
+      
+      if (githubSync.isConnected) {
+        // GitHub repository mode - more serious warning
+        confirmMessage = `Delete "${file.name.replace('.md', '')}"?\n\nThis will permanently delete the file and all its contents from your GitHub repository. This action cannot be undone.`;
+      } else {
+        // Local storage mode - simpler confirmation
+        confirmMessage = `Delete "${file.name.replace('.md', '')}"?\n\nThis will remove the file from your local storage.`;
+      }
+      
+      if (window.confirm(confirmMessage)) {
+        try {
+          await deleteFile(fileId);
+        } catch (error) {
+          console.error('Failed to delete file:', error);
+        }
       }
     }
-  }, [deleteFile, cancelFileCreation, files]);
+  }, [deleteFile, cancelFileCreation, files, githubSync.isConnected]);
 
   const toggleSidebar = useCallback(() => {
     setSidebarVisible(prev => !prev);
   }, []);
 
-  const handleClearAllData = useCallback(() => {
-    // Clear localStorage
-    localStorage.clear();
-    
-    // Disconnect from GitHub
-    githubSync.handleConnectionChange(false);
-    
-    // Reload the page to reset all state
-    window.location.reload();
-  }, [githubSync]);
 
-  const handleExportData = useCallback(() => {
-    const exportData = {
-      files: files.map(file => ({
-        name: file.name,
-        content: file.content,
-        createdAt: file.createdAt.toISOString(),
-        updatedAt: file.updatedAt.toISOString()
-      })),
-      exportedAt: new Date().toISOString(),
-      version: '1.0'
-    };
-
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `zen-journal-export-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, [files]);
 
   if (loading) {
     return (
@@ -169,17 +150,18 @@ export const ZenJournal = () => {
           {githubSync.isConnected && (
             <SyncIndicator
               status={githubSync.syncStatus}
-              lastSynced={githubSync.lastSynced}
+              lastSynced={githubSync.lastSynced || undefined}
               onManualSync={() => githubSync.manualSync(files)}
               onResolveConflicts={() => setShowConflictResolution(true)}
             />
           )}
           
-          <GitHubConnection onConnectionChange={githubSync.handleConnectionChange} />
-          
-          <DataManagement 
-            onClearAllData={handleClearAllData}
-            onExportData={handleExportData}
+          <SettingsPanel
+            onConnectionChange={githubSync.handleConnectionChange}
+            onClearDataForDisconnect={clearAllData}
+            onReloadFiles={refreshFiles}
+            onCloseSidebar={() => setSidebarVisible(false)}
+            localFiles={files}
           />
         </div>
       </header>

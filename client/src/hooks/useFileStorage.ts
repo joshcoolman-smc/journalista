@@ -11,7 +11,7 @@ export const useFileStorage = () => {
 
   useEffect(() => {
     loadFiles();
-  }, []);
+  }, [githubSync.isConnected]); // React to connection changes
 
   const loadFiles = async () => {
     try {
@@ -19,40 +19,27 @@ export const useFileStorage = () => {
       
       // If GitHub is connected, GitHub is the source of truth
       if (githubSync.isConnected) {
-        try {
-          // Pull the latest files from GitHub (source of truth)
-          const githubFiles = await githubSync.pullChanges();
-          
-          // Update localStorage cache with GitHub data
-          await fileStorage.clearAll();
-          for (const file of githubFiles) {
-            await fileStorage.saveFile(file);
-          }
-          
-          setFiles(githubFiles);
-          
-          // Auto-select the first file if none is selected and we have files
-          if (githubFiles.length > 0 && !currentFile) {
-            setCurrentFile(githubFiles[0]);
-          }
-        } catch (error) {
-          console.error('Failed to load from GitHub, falling back to localStorage:', error);
-          // Fallback to localStorage if GitHub fails
-          const localFiles = await fileStorage.loadFiles();
-          setFiles(localFiles);
-          
-          if (localFiles.length > 0 && !currentFile) {
-            setCurrentFile(localFiles[0]);
-          }
+        // GitHub is the ONLY source of truth when connected
+        console.log('[Storage] Loading from GitHub (connected mode)');
+        const githubFiles = await githubSync.pullChanges();
+        setFiles(githubFiles);
+        
+        // Auto-select the first file if we have files
+        if (githubFiles.length > 0) {
+          setCurrentFile(githubFiles[0]);
+        } else {
+          setCurrentFile(null);
         }
       } else {
-        // No GitHub connection, use localStorage as primary storage
+        // Local storage ONLY when not connected to GitHub
+        console.log('[Storage] Loading from localStorage (local mode)');
         const localFiles = await fileStorage.loadFiles();
         setFiles(localFiles);
         
-        // Auto-select the first file if none is selected and we have files
-        if (localFiles.length > 0 && !currentFile) {
+        if (localFiles.length > 0) {
           setCurrentFile(localFiles[0]);
+        } else {
+          setCurrentFile(null);
         }
       }
     } catch (error) {
@@ -134,20 +121,13 @@ export const useFileStorage = () => {
     try {
       let finalFile = file;
       
-      // If GitHub is connected, save to GitHub first (source of truth)
       if (githubSync.isConnected) {
-        try {
-          finalFile = await githubSync.syncFile(file);
-          // Update localStorage cache with GitHub metadata
-          await fileStorage.saveFile(finalFile);
-        } catch (error) {
-          console.error('Failed to sync file to GitHub:', error);
-          // Still save to localStorage even if GitHub fails
-          await fileStorage.saveFile(file);
-          finalFile = file;
-        }
+        // GitHub ONLY - no local storage when connected
+        console.log('[Storage] Saving to GitHub (connected mode)');
+        finalFile = await githubSync.syncFile(file);
       } else {
-        // No GitHub connection, save to localStorage only
+        // Local storage ONLY when not connected
+        console.log('[Storage] Saving to localStorage (local mode)');
         await fileStorage.saveFile(file);
       }
       
@@ -166,19 +146,18 @@ export const useFileStorage = () => {
     try {
       const fileToDelete = files.find(f => f.id === fileId);
       
-      // If GitHub is connected and file has GitHub SHA, delete from GitHub first
-      if (githubSync.isConnected && fileToDelete?.githubSha) {
-        try {
+      if (githubSync.isConnected) {
+        // GitHub ONLY - delete from GitHub when connected
+        if (fileToDelete?.githubSha) {
+          console.log('[Storage] Deleting from GitHub (connected mode)');
           await githubSync.deleteFile(fileToDelete);
-          console.log('File successfully deleted from GitHub repository');
-        } catch (error) {
-          console.error('Failed to delete file from GitHub:', error);
-          // Continue with local deletion even if GitHub fails
         }
+      } else {
+        // Local storage ONLY when not connected
+        console.log('[Storage] Deleting from localStorage (local mode)');
+        await fileStorage.deleteFile(fileId);
       }
       
-      // Always delete from localStorage
-      await fileStorage.deleteFile(fileId);
       setFiles(prev => prev.filter(f => f.id !== fileId));
       
       if (currentFile?.id === fileId) {
@@ -192,7 +171,30 @@ export const useFileStorage = () => {
   };
 
   const selectFile = (file: JournalFile) => {
+    console.log('[File Selection]', {
+      id: file.id,
+      name: file.name,
+      contentLength: file.content?.length || 0,
+      contentPreview: file.content?.substring(0, 100) || 'No content',
+      hasContent: Boolean(file.content && file.content.length > 0)
+    });
     setCurrentFile(file);
+  };
+
+  const clearAllData = async () => {
+    console.log('[Storage] Clearing all data - reset to initial state');
+    
+    // Clear in-memory state
+    setFiles([]);
+    setCurrentFile(null);
+    
+    // Also clear localStorage to prevent any persistence
+    try {
+      await fileStorage.clearAll();
+      console.log('[Storage] Cleared localStorage');
+    } catch (error) {
+      console.error('[Storage] Failed to clear localStorage:', error);
+    }
   };
 
   return {
@@ -207,6 +209,7 @@ export const useFileStorage = () => {
     deleteFile,
     selectFile,
     refreshFiles: loadFiles,
+    clearAllData,
     githubSync
   };
 };

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { JournalFile } from '../types/journal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Eye, Download, Menu, Code, Columns } from 'lucide-react';
+import { Eye, Copy, Menu, Code, Columns } from 'lucide-react';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface EditorCanvasProps {
@@ -24,6 +24,12 @@ export const EditorCanvas = ({
 
   useEffect(() => {
     if (textareaRef.current && file) {
+      console.log('EditorCanvas received file:', {
+        id: file.id,
+        name: file.name,
+        contentLength: file.content?.length || 0,
+        contentPreview: file.content?.substring(0, 100) || 'No content'
+      });
       textareaRef.current.value = file.content;
       setLiveContent(file.content);
     }
@@ -45,16 +51,15 @@ export const EditorCanvas = ({
   // Use live content for preview to show real-time updates
   const previewContent = liveContent || file?.content || '';
 
-  const exportFile = () => {
+  const copyToClipboard = async () => {
     if (!file) return;
     
-    const blob = new Blob([file.content], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      await navigator.clipboard.writeText(file.content);
+      // You could add a toast notification here if needed
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
   };
 
   if (!file) {
@@ -131,12 +136,12 @@ export const EditorCanvas = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={exportFile}
+              onClick={copyToClipboard}
               className="transition-zen"
               style={{ color: 'var(--zen-text-muted)' }}
-              title="Export as Markdown"
+              title="Copy to Clipboard"
             >
-              <Download className="h-4 w-4" />
+              <Copy className="h-4 w-4" />
             </Button>
           </div>
           
