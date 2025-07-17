@@ -263,10 +263,6 @@ This project demonstrates:
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-## Support
-
-For issues or questions about the application, please open an issue on GitHub.
-
 ---
 
 **Privacy First. Markdown Powered. GitHub Backed.**
